@@ -257,22 +257,22 @@ flowchart LR
   classDef lightBlueBox fill:#dae8fc,stroke:#6c8ebf,color:#111827,stroke-dasharray: 5 5;
   classDef grayBox fill:#ccc,stroke:#333,color:#111827;
 
-  D(Dataset):::blueBox -- wasGeneratedBy --> PR("Project<br>(projects.csv)")
-  D -- contactPoint --> CP("Project leader<br>(people.csv)")
+  D(Dataset):::blueBox -- contactPoint --> CP("Project leader<br>(people.csv)")
+  D -- wasGeneratedBy --> PR("Project<br>(projects.csv)")
   S(Sample):::blueBox -- contactPoint --> CP
   S -- wasGeneratedBy --> PR
-  %%S -. hasComposition .-> C("Composition"):::lightBlueBox
-  S -- creator --> ST("student<br>(people.csv)")
+  S -- hasComposition --> C("Composition"):::blueBox
+  S -- creator --> ST("Researcher<br>(people.csv)")
   D -- rightsHolder --> RH("Organisation<br>(organisations.csv)")
   D -- license --> LD("License document<br>(licenses.csv)")
   D -- creator --> ST
   D -- processedFrom --> S
   D -- distribution --> DI(Distribution):::grayBox
-  M(Measurement):::blueBox -- hasInput --> S
+  M(Measurement):::blueBox -- hasTechnique --> TC("Technique<br>(techniques.csv)")
   M -- hasOutput --> D
-  M -- performedWith --> EQ("Instrument<br>(equipments.csv)")
+  M -- hasInput --> S
   M -- hasOperator --> ST
-  M -- hasTechnique --> TC("Technique<br>(techniques.csv)")
+  M -- hasInterpreter --> EQ("Instrument<br>(equipments.csv)")
 
   click CP "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
   click ST "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
@@ -282,7 +282,8 @@ flowchart LR
   click EQ "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/equipments.csv" "template"
   click TC "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/techniques.csv" "template"
 ```
-**Figure 1**. Generated section of a knowledge graph showing interrelations between the generated `sample`, `dataset` and `measurement` (blue boxes) and their relation to shared resources (red boxes). The dataset `distribution` (gray box) is also generated, while the relations to the `composition` must be entered by hand (see below). Colour codes are the same as in the [templates figure] in the [README] file.
+**Figure 1**. Generated section of a knowledge graph showing interrelations between the generated `sample`, `dataset` and `measurement` (blue boxes) and their relation to shared resources (red boxes). The dataset `distribution` (gray box) is a blank node describing how the dataset can be accessed.
+Colour codes are the same as in the [templates figure] in the [README] file.
 
 
 [Treeweaver]: treeweaver.md
