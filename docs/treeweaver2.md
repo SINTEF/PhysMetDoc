@@ -257,22 +257,22 @@ flowchart LR
   classDef lightBlueBox fill:#dae8fc,stroke:#6c8ebf,color:#111827,stroke-dasharray: 5 5;
   classDef grayBox fill:#ccc,stroke:#333,color:#111827;
 
-  D(dataset):::blueBox -- contactPoint --> CP("supervisor<br>(people.csv)")
-  D -- wasGeneratedBy --> PR("project<br>(projects.csv)")
-  S(sample):::blueBox -- contactPoint --> CP
+  D(Dataset):::blueBox -- wasGeneratedBy --> PR("Project<br>(projects.csv)")
+  D -- contactPoint --> CP("Project leader<br>(people.csv)")
+  S(Sample):::blueBox -- contactPoint --> CP
   S -- wasGeneratedBy --> PR
-  S -. hasComposition .-> C("composition"):::lightBlueBox
+  %%S -. hasComposition .-> C("Composition"):::lightBlueBox
   S -- creator --> ST("student<br>(people.csv)")
-  D -- rightsHolder --> RH("university<br>(organisations.csv)")
-  D -- license --> LD("license document<br>(licenses.csv)")
+  D -- rightsHolder --> RH("Organisation<br>(organisations.csv)")
+  D -- license --> LD("License document<br>(licenses.csv)")
   D -- creator --> ST
   D -- processedFrom --> S
-  D -- distribution --> DI(distribution):::grayBox
-  M(measurement):::blueBox -- hasInput --> S
+  D -- distribution --> DI(Distribution):::grayBox
+  M(Measurement):::blueBox -- hasInput --> S
   M -- hasOutput --> D
-  M -- performedWith --> EQ("instrument<br>(equipments.csv)")
+  M -- performedWith --> EQ("Instrument<br>(equipments.csv)")
   M -- hasOperator --> ST
-  M -- hasTechnique --> TC("technique<br>(techniques.csv)")
+  M -- hasTechnique --> TC("Technique<br>(techniques.csv)")
 
   click CP "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
   click ST "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
