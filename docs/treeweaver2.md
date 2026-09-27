@@ -60,7 +60,7 @@ Later levels will overwrite assignments done in earlier levels.
 
 2. **Static update**: After the computed variables have been assigned, they are updated from the static variable definitions in the [environment] section.
 
-3. **Match update**: Variable assigned from pattern matching and match-specific assignments in the [pattern] section.
+3. **Match update**: Variable assigned from pattern matching and match-specific assignments in the [patterns] section.
 
 
 ### Section descriptions
@@ -223,7 +223,7 @@ Currently patterns supports the following fields:
   | [`seq`]            | Matches any character in `seq`.                                               |
   | [!`seq`]           | Matches any character not in `seq`.                                           |
   | {`alt1`,`alt2`}    | Matches either `alt1` or `alt2`. Is applied to patterns before anything else. |
-  | \`c`               | Escapes special character `c`.                                                |
+  | \\`c`              | Escapes special character `c`.                                                |
 
 - **appliesTo**: List of template names that the pattern applies to.
   The default is to apply it to all patterns.
