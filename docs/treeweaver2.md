@@ -198,8 +198,9 @@ patterns:
           "{x}": "pm:{x}"
       call:
         # List of user-defined functions to call in the given order.
-        # These functions extracts documentation from the file system and returns a dict with variable-value pairs.
-        # They are called with arguments `path`, `env`, `**args`, where optional `**args` may be give as shown for myfunction2 below.
+        # These functions extracts documentation from the file system and returns a dict with
+        # variable-value pairs. They are called with arguments `path`, `env`, `**args`, where
+        # the optional `**args` may be provided as shown for myfunction2 below.
           - "mypackage.mymodule:myfunction":
           - "mypackage.mymodule:myfunction2":
               arg1: true

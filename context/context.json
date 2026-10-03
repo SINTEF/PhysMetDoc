@@ -602,10 +602,6 @@
       "@id": "ddoc:ConformanceLevel",
       "@type": "http://www.w3.org/2002/07/owl#Class"
     },
-    "Restriction": {
-      "@id": "owl:Restriction",
-      "@type": "http://www.w3.org/2002/07/owl#Class"
-    },
     "Document": {
       "@id": "foaf:Document",
       "@type": "http://www.w3.org/2002/07/owl#Class"
