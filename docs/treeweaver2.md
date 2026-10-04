@@ -171,13 +171,8 @@ This is a nice well-defined file structure that can be matched with the followin
 patterns:
   - "Data/{instrument}/{technique}/{sample}/{session}/{datafile}":
       match: "Data/{SIMS,SEM}/**"  # Only match "instrument"-directories named "SIMS" and "SEM"
-      vars:
-        # Definition of variables used in the templates
-        sampleId: "{sample}"
-        datasetId: "data-{sample}-{technique}-{experiment}"
-        measurementId: "{sample}-{technique}-{experiment}"
-        equipmentId: "equip:{instrument}"
-        processedFrom: "{prefix}:{sample}"
+      exclude:
+        - "**/*.tmp"  # Exclude files ending with .tmp
       mappings:
         # Update or define variables via mappings
         # The below updates `instrument` according to the following statements:
@@ -205,6 +200,13 @@ patterns:
           - "mypackage.mymodule:myfunction2":
               arg1: true
               arg2: 2
+      vars:
+        # Definition of variables used in the templates
+        sampleId: "{sample}"
+        datasetId: "data-{sample}-{technique}-{experiment}"
+        measurementId: "{sample}-{technique}-{experiment}"
+        equipmentId: "equip:{instrument}"
+        processedFrom: "{prefix}:{sample}"
 
 ```
 
@@ -214,27 +216,45 @@ The `vars` field will define additional variables based on the new environment.
 Currently patterns supports the following fields:
 - **match**: Optional match-filter.
   If given, only paths matching this filter will populate templates.
-  Implemented using [wcmatch.glob], supporting:
-
-  | Special characters | Meaning                                                                       |
-  |--------------------|-------------------------------------------------------------------------------|
-  | *                  | Matches anything except slashes.                                              |
-  | **                 | Matches zero or more directories.                                             |
-  | ?                  | Matches any single character.                                                 |
-  | [`seq`]            | Matches any character in `seq`.                                               |
-  | [!`seq`]           | Matches any character not in `seq`.                                           |
-  | {`alt1`,`alt2`}    | Matches either `alt1` or `alt2`. Is applied to patterns before anything else. |
-  | \\`c`              | Escapes special character `c`.                                                |
-
+  See [Glob matching] for valid patterns.
+- **exclude**: Optional list of filters.
+  If given, it excludes matching paths. It takes precedence over **match**.
+  See [Glob matching] for valid exclude patterns.
 - **appliesTo**: List of template names that the pattern applies to.
   The default is to apply it to all patterns.
-- **vars**: Updates the environment with additional variable definitions.
 - **mappings**: Updates the environment based on mapping transformations.
 - **call**: Call a function that should return a dict with additional variables for the environment.
+- **vars**: Updates the environment with additional variable definitions.
 
 
 #### exclude
 A list of glob patterns for file (or trailing directory) names to exclude in the pattern matching.
+See [Glob matching] for valid patterns.
+
+Example:
+
+```yaml
+exclude:
+- ".*"
+- "~*"
+- "*~"
+- "README*"
+```
+
+
+### Glob matching
+Treeviewer2 uses [wcmatch.glob] for glob matching, which supports the following special characters:
+
+| Special characters | Meaning                                                                       |
+|--------------------|-------------------------------------------------------------------------------|
+| *                  | Matches anything except slashes.                                              |
+| **                 | Matches zero or more directories.                                             |
+| ?                  | Matches any single character.                                                 |
+| [`seq`]            | Matches any character in `seq`.                                               |
+| [!`seq`]           | Matches any character not in `seq`.                                           |
+| {`alt1`,`alt2`}    | Matches either `alt1` or `alt2`. Is applied to patterns before anything else. |
+| \\`c`              | Escapes special character `c`.                                                |
+
 
 
 ## Generated output
@@ -294,6 +314,7 @@ Colour codes are the same as in the [templates figure] in the [README] file.
 [patterns]: #patterns
 [exclude]: #exclude
 [templates]: #templates
+[Glob matching]: #glob-matching
 [tripper]: https://github.com/EMMC-ASBL/tripper
 [datadoc]: https://emmc-asbl.github.io/tripper/latest/datadoc/introduction/
 [templates figure]: https://github.com/SINTEF/physmet-data-documentation-templates/raw/main/figs/tables.svg

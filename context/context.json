@@ -52,10 +52,17 @@
       "@id": "owl:sameAs",
       "@type": "@id"
     },
+
     "affiliation": {
       "@id": "schema:affiliation",
       "@type": "@id"
     },
+    "manufacturer": "schema:manufacturer",
+    "model": "schema:model",
+    "serialNumber": "schema:serialNumber",
+    "modelDate": "schema:modelDate",
+    "software": "schema:actionApplication",
+
     "email": "foaf:mbox",
     "homepage": "foaf:homepage",
     "hasFundingAgency": {

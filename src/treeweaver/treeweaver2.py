@@ -5,7 +5,9 @@
 import argparse
 import importlib
 import re
+import warnings
 from collections import defaultdict
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
@@ -60,6 +62,10 @@ parse_formatters = {
 }
 
 
+class UnassignedVariableError(KeyError):
+    """Raised if a variable needed in a template has not been assigned."""
+
+
 class Template:
     """Represents a template for a JSON-LD representation of a resource.
 
@@ -92,10 +98,11 @@ class Template:
                     if s := substitute(stencil, env):
                         doc[keyword] = s
                 except KeyError as exc:
-                    raise KeyError(  # pylint: disable=raise-missing-from
-                        f"Variable '{exc}' in stencil substitution for "
+                    # pylint: disable=raise-missing-from
+                    raise UnassignedVariableError(
+                        f"Variable {exc} in stencil substitution for "
                         f"'{keyword}' is not assigned in pattern for "
-                        f"template: '{self.name}'"
+                        f"template '{self.name}'"
                     )
         return doc
 
@@ -124,14 +131,9 @@ class Pattern:
         self.appliesTo = s.pop("appliesTo", templates.keys())
 
         self.matchfilter = (
-            glob.compile(
-                s.pop("match"), flags=glob.CASE | glob.GLOBSTAR | glob.BRACE
-            )
-            if "match" in s
-            else None
+            globcompile(s.pop("match")) if "match" in s else None
         )
-
-        self.vars = s.pop("vars", {})
+        self.excludefilters = [globcompile(e) for e in s.pop("exclude", ())]
 
         self.mappings = {}
         for key, maps in s.pop("mappings", {}).items():
@@ -151,6 +153,8 @@ class Pattern:
                 }
             )
 
+        self.vars = s.pop("vars", {})
+
         self.templates = {name: templates[name] for name in self.appliesTo}
 
         if s:
@@ -160,7 +164,11 @@ class Pattern:
             )
 
     def match(self, path: PathType) -> bool:
-        """Return whether `path` matches optional match filter."""
+        """Return whether `path` matches optional match (but not
+        exclude) filters."""
+        for excludefilter in self.excludefilters:
+            if excludefilter.match(path):
+                return False
         if self.matchfilter:
             return self.matchfilter.match(path)
         return True
@@ -212,7 +220,7 @@ class Pattern:
                 )
 
     def assign_from_call(self, path: PathType, env: dict):
-        """Update ` env` from calling functions described in the call
+        """Update `env` from calling functions described in the call
         field in the configuration of a pattern.
 
         Arguments:
@@ -253,13 +261,28 @@ class Pattern:
 
 
 class Treeweaver:
-    """Class for documenting a directory structure."""
+    """Class for documenting a directory structure.
+
+    Arguments:
+        configfile: YAML configuration file.
+        rootdir: Root directory for the documented data. Defaults to the
+            directory of `configfile`.
+        settings: Dict with settings. See below for details.
+
+    Notes:
+        The settings has currently the following keys:
+        - skip_unassigned (bool): Whether to skip documenting a path, if a
+          variable needed by a template has not been assigned.
+
+    """
 
     def __init__(
         self,
         configfile: PathType,
         rootdir: Optional[PathType] = None,
+        settings: Optional[Mapping] = None,
     ) -> None:
+        self.settings = dict(settings) if settings else {}
         self.env: dict = {}
         self.templates: dict = {}
         self.patterns: list = []
@@ -278,7 +301,8 @@ class Treeweaver:
             self.templates.update(
                 {name: Template(name, v) for name, v in templates.items()}
             )
-            self.exclude.extend(d.get("exclude", ()))
+            self.exclude.extend([globcompile(e) for e in d.get("exclude", ())])
+
             self.patterns = []
             for p in d.get("patterns", ()):
                 pattern, spec = next(iter(p.items()))
@@ -295,7 +319,16 @@ class Treeweaver:
         """
         docs = defaultdict(list)
         for pattern in self.patterns:
-            for k, v in pattern.document(path, self.env).items():
+            try:
+                d = pattern.document(path, self.env)
+            except UnassignedVariableError as exc:
+                msg = f"When documenting '{path}': {str(exc)[1:-1]}"
+                if self.settings.get("skip_unassigned", False):
+                    warnings.warn(msg)
+                    continue
+                # pylint: disable=raise-missing-from
+                raise UnassignedVariableError(msg)
+            for k, v in d.items():
                 docs[k].append(v)
         return dict(docs)
 
@@ -386,7 +419,7 @@ class Treeweaver:
         for path in root.rglob("*"):
             skip = False
             for exclude_pattern in self.exclude:
-                if path.match(exclude_pattern):
+                if exclude_pattern.match(path):
                     skip = True
             if not skip:
                 relpath = path.relative_to(root)
@@ -498,6 +531,11 @@ class Treeweaver:
         else:
             tables = self.totables(docs)
         tables.write(p, format=outformat, **kwargs)
+
+
+def globcompile(pattern):
+    """Return compiled glob pattern."""
+    return glob.compile(pattern, flags=glob.CASE | glob.GLOBSTAR | glob.BRACE)
 
 
 def totable(

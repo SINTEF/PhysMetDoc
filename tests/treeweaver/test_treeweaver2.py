@@ -73,9 +73,14 @@ def test_template_substitute_raises_on_missing_variable():
 
 def test_pattern_match():
     """Test pattern.match() method."""
-    pattern = Pattern("data/{dataset}", {}, {"match": "data/*.tif"})
+    spec = {"match": "data/*.tif", "exclude": ["**/[0-9]*.tif", "**/ex.tif"]}
+    pattern = Pattern("data/{dataset}", {}, spec)
     assert pattern.match("data/dataset.tif")
     assert not pattern.match("data/dataset.png")
+    assert not pattern.match("data/001.tif")
+    assert not pattern.match("data/ex.tif")
+    assert pattern.match("data/img.tif")
+    assert not pattern.match("images/img.tif")
 
 
 def test_pattern_call():
@@ -376,7 +381,9 @@ def test_treeweaver_savedoc_andreas2():
     """Test documenting Andreas's data."""
     source = Path("data") / "Andreas-sharepoint.xlsx"
     if source.exists():
-        tw = Treeweaver(datadir / "Andreas2.yaml")
+        tw = Treeweaver(
+            datadir / "Andreas2.yaml", settings={"skip_unassigned": True}
+        )
         tw.savedoc(
             source=source,
             output=outdir / "Andreas2.xlsx",
