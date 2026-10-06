@@ -60,7 +60,7 @@ Later levels will overwrite assignments done in earlier levels.
 
 2. **Static update**: After the computed variables have been assigned, they are updated from the static variable definitions in the [environment] section.
 
-3. **Match update**: Variable assigned from pattern matching and match-specific assignments in the [pattern] section.
+3. **Match update**: Variable assigned from pattern matching and match-specific assignments in the [patterns] section.
 
 
 ### Section descriptions
@@ -169,26 +169,92 @@ This is a nice well-defined file structure that can be matched with the followin
 
 ```yaml
 patterns:
-- "Data/{instrument}/{technique}/{sample}/{session}/{datafile}":
-    vardefs:
-      sampleId: "{sample}"
-      datasetId: "data-{sample}-{technique}-{experiment}"
-      measurementId: "{sample}-{technique}-{experiment}"
-      equipmentId: "equip:{instrument}"
-      processedFrom: "{prefix}:{sample}"
+  - "Data/{instrument}/{technique}/{sample}/{session}/{datafile}":
+      match: "Data/{SIMS,SEM}/**"  # Only match "instrument"-directories named "SIMS" and "SEM"
+      exclude:
+        - "**/*.tmp"  # Exclude files ending with .tmp
+      mappings:
+        # Update or define variables via mappings
+        # The below updates `instrument` according to the following statements:
+        #     if instrument == "SEM":  instrument = "emlab:LVSEM"
+        #     if instrument == "SIMS": instrument = "emlab:SIMS30"
+        # It is an error if `instrument` is anything else.
+        instrument:
+          SEM: emlab:LVSEM
+          SIMS: emlab:SIMS30
+        # The following sets `data` accoring to the following statements:
+        #     if dataset == "sem260925": data = "pm:SEM"
+        #     if dataset match "{x}":    data = "pm:{x}"
+        # where `{x}` is a local variable that will not influence the environment.
+        # The first matching mapping will be used, hence, place the catch all `{x}`
+        # as the last mapping.
+        "data:dataset":
+          "sem260925": "pm:SEM"
+          "{x}": "pm:{x}"
+      call:
+        # List of user-defined functions to call in the given order.
+        # These functions extracts documentation from the file system and returns a dict with
+        # variable-value pairs. They are called with arguments `path`, `env`, `**args`, where
+        # the optional `**args` may be provided as shown for myfunction2 below.
+          - "mypackage.mymodule:myfunction":
+          - "mypackage.mymodule:myfunction2":
+              arg1: true
+              arg2: 2
+      vars:
+        # Definition of variables used in the templates
+        sampleId: "{sample}"
+        datasetId: "data-{sample}-{technique}-{experiment}"
+        measurementId: "{sample}-{technique}-{experiment}"
+        equipmentId: "equip:{instrument}"
+        processedFrom: "{prefix}:{sample}"
+
 ```
 
 Here one pattern is defined, that will match the leaf files, assigning the variables `instrument`, `technique`, `sample`, `session` and `datafile` based on the matching parts of the full path of each file.
-The `vardefs` field will define additional variables based on the new environment.
+The `vars` field will define additional variables based on the new environment.
 
 Currently patterns supports the following fields:
-- **vardefs**: Variable definitions based on the new environment.
+- **match**: Optional match-filter.
+  If given, only paths matching this filter will populate templates.
+  See [Glob matching] for valid patterns.
+- **exclude**: Optional list of filters.
+  If given, it excludes matching paths. It takes precedence over **match**.
+  See [Glob matching] for valid exclude patterns.
 - **appliesTo**: List of template names that the pattern applies to.
   The default is to apply it to all patterns.
+- **mappings**: Updates the environment based on mapping transformations.
+- **call**: Call a function that should return a dict with additional variables for the environment.
+- **vars**: Updates the environment with additional variable definitions.
 
 
 #### exclude
 A list of glob patterns for file (or trailing directory) names to exclude in the pattern matching.
+See [Glob matching] for valid patterns.
+
+Example:
+
+```yaml
+exclude:
+- ".*"
+- "~*"
+- "*~"
+- "README*"
+```
+
+
+### Glob matching
+Treeviewer2 uses [wcmatch.glob] for glob matching, which supports the following special characters:
+
+| Special characters | Meaning                                                                       |
+|--------------------|-------------------------------------------------------------------------------|
+| *                  | Matches anything except slashes.                                              |
+| **                 | Matches zero or more directories.                                             |
+| ?                  | Matches any single character.                                                 |
+| [`seq`]            | Matches any character in `seq`.                                               |
+| [!`seq`]           | Matches any character not in `seq`.                                           |
+| {`alt1`,`alt2`}    | Matches either `alt1` or `alt2`. Is applied to patterns before anything else. |
+| \\`c`              | Escapes special character `c`.                                                |
+
 
 
 ## Generated output
@@ -212,22 +278,22 @@ flowchart LR
   classDef lightBlueBox fill:#dae8fc,stroke:#6c8ebf,color:#111827,stroke-dasharray: 5 5;
   classDef grayBox fill:#ccc,stroke:#333,color:#111827;
 
-  D(dataset):::blueBox -- contactPoint --> CP("supervisor<br>(people.csv)")
-  D -- wasGeneratedBy --> PR("project<br>(projects.csv)")
-  S(sample):::blueBox -- contactPoint --> CP
+  D(Dataset):::blueBox -- contactPoint --> CP("Project leader<br>(people.csv)")
+  D -- wasGeneratedBy --> PR("Project<br>(projects.csv)")
+  S(Sample):::blueBox -- contactPoint --> CP
   S -- wasGeneratedBy --> PR
-  S -. hasComposition .-> C("composition"):::lightBlueBox
-  S -- creator --> ST("student<br>(people.csv)")
-  D -- rightsHolder --> RH("university<br>(organisations.csv)")
-  D -- license --> LD("license document<br>(licenses.csv)")
+  S -- hasComposition --> C("Composition"):::blueBox
+  S -- creator --> ST("Researcher<br>(people.csv)")
+  D -- rightsHolder --> RH("Organisation<br>(organisations.csv)")
+  D -- license --> LD("License document<br>(licenses.csv)")
   D -- creator --> ST
   D -- processedFrom --> S
-  D -- distribution --> DI(distribution):::grayBox
-  M(measurement):::blueBox -- hasInput --> S
+  D -- distribution --> DI(Distribution):::grayBox
+  M(Measurement):::blueBox -- hasTechnique --> TC("Technique<br>(techniques.csv)")
   M -- hasOutput --> D
-  M -- performedWith --> EQ("instrument<br>(equipments.csv)")
+  M -- hasInput --> S
   M -- hasOperator --> ST
-  M -- hasTechnique --> TC("technique<br>(techniques.csv)")
+  M -- hasInterpreter --> EQ("Instrument<br>(equipments.csv)")
 
   click CP "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
   click ST "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/people.csv" "template"
@@ -237,7 +303,8 @@ flowchart LR
   click EQ "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/equipments.csv" "template"
   click TC "https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/shared/techniques.csv" "template"
 ```
-**Figure 1**. Generated section of a knowledge graph showing interrelations between the generated `sample`, `dataset` and `measurement` (blue boxes) and their relation to shared resources (red boxes). The dataset `distribution` (gray box) is also generated, while the relations to the `composition` must be entered by hand (see below). Colour codes are the same as in the [templates figure] in the [README] file.
+**Figure 1**. Generated section of a knowledge graph showing interrelations between the generated `sample`, `dataset` and `measurement` (blue boxes) and their relation to shared resources (red boxes). The dataset `distribution` (gray box) is a blank node describing how the dataset can be accessed.
+Colour codes are the same as in the [templates figure] in the [README] file.
 
 
 [Treeweaver]: treeweaver.md
@@ -247,7 +314,9 @@ flowchart LR
 [patterns]: #patterns
 [exclude]: #exclude
 [templates]: #templates
+[Glob matching]: #glob-matching
 [tripper]: https://github.com/EMMC-ASBL/tripper
 [datadoc]: https://emmc-asbl.github.io/tripper/latest/datadoc/introduction/
 [templates figure]: https://github.com/SINTEF/physmet-data-documentation-templates/raw/main/figs/tables.svg
 [README]: https://github.com/SINTEF/physmet-data-documentation-templates/blob/main/README.md
+[wcmatch.glob]: https://facelessuser.github.io/wcmatch/glob/#wcmatchglob

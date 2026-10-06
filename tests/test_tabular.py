@@ -503,7 +503,13 @@ if __name__ == "__main__":
             test_func()
             print("PASSED")
             PASSED += 1
-        except (AssertionError, ValueError, TypeError, KeyError, OSError) as e:
+        except (
+            AssertionError,
+            ValueError,
+            TypeError,
+            KeyError,
+            OSError,
+        ) as e:
             print(f"FAILED\n  -> {type(e).__name__}: {e}")
             FAILED += 1
 

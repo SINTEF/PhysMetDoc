@@ -52,10 +52,17 @@
       "@id": "owl:sameAs",
       "@type": "@id"
     },
+
     "affiliation": {
       "@id": "schema:affiliation",
       "@type": "@id"
     },
+    "manufacturer": "schema:manufacturer",
+    "model": "schema:model",
+    "serialNumber": "schema:serialNumber",
+    "modelDate": "schema:modelDate",
+    "software": "schema:actionApplication",
+
     "email": "foaf:mbox",
     "homepage": "foaf:homepage",
     "hasFundingAgency": {
@@ -111,16 +118,16 @@
       "@id": "emmo:EMMO_ae2d1a96_bfa1_409a_a7d2_03d69e8a125a",
       "@type": "@id"
     },
+    "hasAgent": {
+      "@id": "emmo:EMMO_cd24eb82_a11c_4a31_96ea_32f870c5580a",
+      "@type": "@id"
+    },
     "hasOperator": {
       "@id": "chameo:hasOperator",
       "@type": "@id"
     },
-    "performedWith": {
-      "@id": "ddoc:performedWith",
-      "@type": "@id"
-    },
     "hasTechnique": {
-      "@id": "ddoc:hasTechnique",
+      "@id": "chameo:hasTechnique",
       "@type": "@id"
     },
 
@@ -621,10 +628,6 @@
     },
     "ConformanceLevel": {
       "@id": "ddoc:ConformanceLevel",
-      "@type": "http://www.w3.org/2002/07/owl#Class"
-    },
-    "Restriction": {
-      "@id": "owl:Restriction",
       "@type": "http://www.w3.org/2002/07/owl#Class"
     },
     "Document": {
