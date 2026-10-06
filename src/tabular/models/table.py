@@ -22,6 +22,10 @@ IndexType = Union[int, str]
 logger = logging.getLogger(__name__)
 
 
+class NODEFAULT:
+    """Singelton representing that no default has been provided."""
+
+
 class Table:
     """
     Represents a single two-dimensional dataset.
@@ -329,10 +333,10 @@ class Table:
         values: Union[Any, Sequence[Any]],
         outcol: IndexType,
         mode: Literal["unique", "all", "first"] = "all",
-        **default,
+        default: Any = NODEFAULT,
     ) -> Any:
         """
-        Look up first occurence of `value` in `column` and return the
+        Look up occurence(s) of `value` in `column` and return the
         corresponding value in `outcol`.
         If `value` is not in `column` return `default`.
 
@@ -349,7 +353,7 @@ class Table:
                       May be an empty list.
                 - "first": Returns the falue of the first matching row.
                       Raises LookupError if there are no matching rows.
-            **default (Any): Default value to return if no rows matches.
+            default (Any): Default value to return if no rows matches.
 
         Returns:
             Any: Value in `outcol` for first matching row.
@@ -361,8 +365,8 @@ class Table:
                 on `mode`).
         """
         rows = self.matchrows(columns, values)
-        if not rows and default:
-            return default["default"]
+        if not rows and default is not NODEFAULT:
+            return default
 
         i = self.headers.index(outcol) if isinstance(outcol, str) else outcol
         if mode == "unique":
