@@ -447,18 +447,18 @@ def test_json_unicode_formatting():
     assert "Bjørn Ærø" in str(json_str)
 
 
-def test_matchrows():
-    """Test matchrows method."""
+def test_match_rows():
+    """Test match_rows method."""
     t = Table(
         "TestSheet",
         ["ID", "Name", "Age"],
         [(1, "Alice", 32), (2, "Bob", 33), (3, "Cyril", 33)],
     )
-    assert t.matchrows("Name", "Bob") == [[2, "Bob", 33]]
-    assert t.matchrows("Age", 33) == [[2, "Bob", 33], [3, "Cyril", 33]]
-    assert t.matchrows("Age", 42) == []
-    assert t.matchrows(("Age", "Name"), (33, "Bob")) == [[2, "Bob", 33]]
-    assert t.matchrows((), ()) == [
+    assert t.match_rows("Name", "Bob") == [[2, "Bob", 33]]
+    assert t.match_rows("Age", 33) == [[2, "Bob", 33], [3, "Cyril", 33]]
+    assert t.match_rows("Age", 42) == []
+    assert t.match_rows(("Age", "Name"), (33, "Bob")) == [[2, "Bob", 33]]
+    assert t.match_rows((), ()) == [
         [1, "Alice", 32],
         [2, "Bob", 33],
         [3, "Cyril", 33],

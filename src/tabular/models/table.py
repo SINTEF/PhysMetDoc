@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class NODEFAULT:
-    """Singelton representing that no default has been provided."""
+    """Sentinel value indicating that no default has been provided."""
 
 
 class Table:
@@ -298,22 +298,22 @@ class Table:
         """
         return [dict(zip(self.headers, row)) for row in self.rows]
 
-    def matchrows(
+    def match_rows(
         self,
         columns: Union[IndexType, Sequence[IndexType]],
         values: Union[Any, Sequence[Any]],
     ) -> list:
         """
-        Match rows whos values in the given specified column equals `values`.
+        Matches rows whose values in the specified columns equals `values`.
 
         Args:
             columns (Union[IndexType, Sequence[IndexType]]): One or more
-                columns to match for. May be specified by number or name.
+                columns to match against. May be specified by number or name.
             values (Union[Any, Sequence[Any]]): Corresponding values to look
                 for. Must have the same length as `columns`.
 
         Returns:
-            List of matching rows.
+            list: List of matching rows.
 
         Raises:
             ValueError: If an invalid column name is specified.
@@ -327,6 +327,7 @@ class Table:
             rows = [row for row in rows if row[i] == value]
         return rows
 
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def lookup(
         self,
         columns: Union[IndexType, Sequence[IndexType]],
@@ -336,9 +337,10 @@ class Table:
         default: Any = NODEFAULT,
     ) -> Any:
         """
-        Look up occurence(s) of `value` in `column` and return the
-        corresponding value in `outcol`.
-        If `value` is not in `column` return `default`.
+        Looks up occurences of `value` in `columns` and return the
+        corresponding value(s) in `outcol`.
+
+        If no rows match the criteria, returns `default`.
 
         Args:
             columns (Union[IndexType, Sequence[IndexType]]): One or more
@@ -356,7 +358,7 @@ class Table:
             default (Any): Default value to return if no rows matches.
 
         Returns:
-            Any: Value in `outcol` for first matching row.
+            Any: The value(s) in `outcol` based on the specified `mode`.
 
         Raises:
             ValueError: If an invalid column name or mode is specified.
@@ -364,7 +366,7 @@ class Table:
             LookupError: If there are too many or few matching rows (depending
                 on `mode`).
         """
-        rows = self.matchrows(columns, values)
+        rows = self.match_rows(columns, values)
         if not rows and default is not NODEFAULT:
             return default
 
