@@ -16,16 +16,12 @@
             "hasSpeciesPart": {
               "type": "string",
               "description": "Chemical species.",
-              "examples": [
-                "emmo:aluminiumSymbol"
-              ]
+              "examples": ["emmo:aluminiumSymbol"]
             },
             "hasQuantityPart": {
               "type": "object",
               "description": "Physical quantity that the express the single component composition.",
-              "examples": [
-                "emmo:MassFraction"
-              ],
+              "examples": ["emmo:MassFraction"],
               "properties": {
                 "instanceOf": {
                   "type": "string",
@@ -34,28 +30,20 @@
                 "hasMeasurementUnit": {
                   "type": "string",
                   "description": "IRI of physical quantity that express the single component composition.",
-                  "examples": [
-                    "emmo:WeightPercent"
-                  ]
+                  "examples": ["emmo:WeightPercent"]
                 },
                 "dataValue": {
                   "type": "float",
                   "description": "Value of single component composition expressed in terms of the physical quantity referred to by 'instanceOf'.",
-                  "examples": [
-                    0.32
-                  ]
+                  "examples": [0.32]
                 }
               }
             }
           }
-        },
-        "required": [
-          "hasSingleComponentComposition"
-        ]
-      }
-    },
-    "required": [
-      "hasComposition"
-    ]
-  }
+        }
+      },
+      "required": ["hasSingleComponentComposition"]
+    }
+  },
+  "required": ["hasComposition"]
 }

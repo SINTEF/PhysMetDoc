@@ -369,8 +369,29 @@
       "@id": "oteio:hasDatamodelStorage",
       "@type": "xsd:anyURI"
     },
+    "dataValue": "emmo:EMMO_b6292331_94af_4f00_976b_ea55960c2f1c",
+    "hasComposition": {
+      "@id": "emmo:EMMO_bb260eeb_601e_47c3_b896_f99e6b0e4aee",
+      "@type": "@id"
+    },
     "hasDatum": {
       "@id": "emmo:EMMO_b19aacfc_5f73_4c33_9456_469c1e89a53e",
+      "@type": "@id"
+    },
+    "hasMeasurementUnit": {
+      "@id": "emmo:EMMO_bed1d005_b04e_4a90_94cf_02bc678a8569",
+      "@type": "@id"
+    },
+    "hasQuantityPart": {
+      "@id": "emmo:EMMO_95d706e4_8b16_48a1_8dfd_40ccd4df1c12",
+      "@type": "@id"
+    },
+    "hasSpeciesPart": {
+      "@id": "emmo:EMMO_18fdd2cd_4b0a_43a5_a938_66d8290a066c",
+      "@type": "@id"
+    },
+    "hasSingleComponentComposition": {
+      "@id": "emmo:EMMO_889fbe10_70ca_41f3_b701_9853b845c8be",
       "@type": "@id"
     },
     "isDescriptionFor": {
