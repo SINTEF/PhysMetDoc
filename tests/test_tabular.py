@@ -447,6 +447,46 @@ def test_json_unicode_formatting():
     assert "Bjørn Ærø" in str(json_str)
 
 
+def test_match_rows():
+    """Test match_rows method."""
+    t = Table(
+        "TestSheet",
+        ["ID", "Name", "Age"],
+        [(1, "Alice", 32), (2, "Bob", 33), (3, "Cyril", 33)],
+    )
+    assert t.match_rows("Name", "Bob") == [[2, "Bob", 33]]
+    assert t.match_rows("Age", 33) == [[2, "Bob", 33], [3, "Cyril", 33]]
+    assert t.match_rows("Age", 42) == []
+    assert t.match_rows(("Age", "Name"), (33, "Bob")) == [[2, "Bob", 33]]
+    assert t.match_rows((), ()) == [
+        [1, "Alice", 32],
+        [2, "Bob", 33],
+        [3, "Cyril", 33],
+    ]
+
+
+def test_lookup():
+    """Test lookup method."""
+    t = Table(
+        "TestSheet",
+        ["ID", "Name", "Age"],
+        [(1, "Alice", 32), (2, "Bob", 33), (3, "Cyril", 33)],
+    )
+    assert t.lookup("Name", "Bob", "ID") == [2]
+    assert t.lookup(1, "Bob", "ID") == [2]
+    assert t.lookup("Age", 33, "ID") == [2, 3]
+    assert t.lookup(2, 33, 0) == [2, 3]
+    assert t.lookup("Name", "Bob", "ID", mode="unique") == 2
+    assert t.lookup("Age", 33, "ID", mode="first") == 2
+    assert t.lookup("Age", 42, "ID", default=-1) == -1
+    with pytest.raises(LookupError):
+        t.lookup("Age", 33, "ID", mode="unique")
+    with pytest.raises(ValueError):
+        t.lookup("Non-existing", 33, "ID", mode="unique")
+    with pytest.raises(IndexError):
+        t.lookup(5, 33, "ID", mode="unique")
+
+
 # pylint: disable=duplicate-code
 if __name__ == "__main__":
     print("Running Tabular Data IO tests standalone...\n")
