@@ -13,14 +13,20 @@ requires-python = ">=3.12"
 dependencies = [
     "PyYAML>=6.0.3",
     "parse>=1.22.1",
+    "tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@master",
+    "wcmatch>=11.0.1",
     "jsonschema>=4.26.0",
     "requests>=2.34.2",
 ]
 
 [project.optional-dependencies]
 excel = ["openpyxl"]
+callfunctions = [
+    "pillow>=12.0.0",
+    "dm3-lib @ git+https://github.com/piraynal/pyDM3reader.git@main",
+]
 testing = [
-    "physmetdoc[excel]",
+    "physmetdoc[excel,callfunctions]",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
 ]
@@ -58,6 +64,9 @@ packages = [
 
 [tool.hatch.build.targets.sdist]
 include = ["/src/oold_converter", "/src/tabular", "/src/treeweaver"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.pylint.messages_control]
 disable = ["too-few-public-methods", "redefined-builtin"]

@@ -1,23 +1,42 @@
 """Tests for treeweaver2.py - the updated treeweaver implementation."""
 
 import os
-import tempfile
+import shutil
 from pathlib import Path
 
 import pytest
 
-from tabular import Table, Tables
+from tabular import Table
 from treeweaver.treeweaver2 import (
     Pattern,
+    PatternSpecError,
     Template,
     Treeweaver,
     substitute,
     totable,
 )
 
+# --- Test Environment Setup ---
+
 datadir = Path(__file__).resolve().parent / "data"
 outdir = datadir / "output"
 outdir.mkdir(parents=True, exist_ok=True)
+
+
+def mktestdir(testname: str) -> Path:
+    """Return Path object for a new empty test directory for a test
+    with the given name.
+
+    This keeps the test output for easier debugging.
+    """
+    testdir = outdir / testname
+    if testdir.exists():
+        shutil.rmtree(testdir)
+    testdir.mkdir(parents=True)
+    return testdir
+
+
+# --- Tests Template class ---
 
 
 def test_template_substitute():
@@ -49,13 +68,114 @@ def test_template_substitute_raises_on_missing_variable():
         template.substitute(env)
 
 
+# --- Tests Pattern class ---
+
+
+def test_pattern_match():
+    """Test pattern.match() method."""
+    spec = {"match": "data/*.tif", "exclude": ["**/[0-9]*.tif", "**/ex.tif"]}
+    pattern = Pattern("data/{dataset}", {}, spec)
+    assert pattern.match("data/dataset.tif")
+    assert not pattern.match("data/dataset.png")
+    assert not pattern.match("data/001.tif")
+    assert not pattern.match("data/ex.tif")
+    assert pattern.match("data/img.tif")
+    assert not pattern.match("images/img.tif")
+
+
+def test_pattern_call():
+    """Test pattern.call() method."""
+    env = {}
+    callspecs = [{"callmodule:callfunc1": None}]
+    pattern = Pattern("data/{dataset}", env, {"call": callspecs})
+    pattern.assign_from_call("data/dataset.tif", env)
+    assert env == {"a": None}
+
+    env = {"b": 2}
+    callspecs = [{"callmodule:callfunc1": {"a": 1}}]
+    pattern = Pattern("data/{dataset}", env, {"call": callspecs})
+    pattern.assign_from_call("data/dataset.tif", env)
+    assert env == {"a": 1, "b": 2}
+
+
+def test_pattern_mapping_assigns_value_from_environment():
+    """Pattern mappings should rewrite a variable based on a source value."""
+    template = Template(
+        "measurement",
+        {"@id": "{measurementId}", "hasParticipant": "{equipmentId}"},
+    )
+    pattern = Pattern(
+        "{instrument}/{technique}",
+        {"measurement": template},
+        {
+            "vars": {"measurementId": "{instrument}-{technique}"},
+            "mappings": {
+                "equipmentId:instrument": {
+                    "SEM": "emlab:LVSEM",
+                    "SIMS": "emlab:SIMS30",
+                }
+            },
+        },
+    )
+    result = pattern.document("SEM/EBSD", {"rootdir": "."})
+
+    assert result["measurement"]["@id"] == "SEM-EBSD"
+    assert result["measurement"]["hasParticipant"] == "emlab:LVSEM"
+
+
+def test_pattern_mapping_supports_pattern_templates():
+    """Mapped values may also use parse templates and local variables."""
+    template = Template(
+        "dataset", {"@id": "{datasetId}", "source": "{mapping}"}
+    )
+    pattern = Pattern(
+        "{instrument}/{dataset}",
+        {"dataset": template},
+        {
+            "vars": {"datasetId": "{dataset}"},
+            "mappings": {
+                "mapping:dataset": {
+                    "sem260925": "pm:SEM",
+                    "{x}": "pm:{x}",
+                },
+            },
+        },
+    )
+    result = pattern.document("SEM/sem260925", {"rootdir": "."})
+
+    assert result["dataset"]["source"] == "pm:SEM"
+    assert result["dataset"]["@id"] == "sem260925"
+
+
+def test_pattern_mapping_raises_for_matching_failure():
+    """Unknown mapping values should fail loudly instead of silently
+    passing."""
+    template = Template(
+        "measurement",
+        {"@id": "{instrument}", "hasParticipant": "{equipmentId}"},
+    )
+    pattern = Pattern(
+        "{instrument}",
+        {"measurement": template},
+        {
+            "mappings": {
+                "equipmentId:instrument": {
+                    "SEM": "emlab:LVSEM",
+                }
+            }
+        },
+    )
+    with pytest.raises(PatternSpecError, match="no matching mapping"):
+        pattern.document("SIMS", {"rootdir": "."})
+
+
 def test_pattern_document_matches_path():
     """Test Pattern.document() matches paths and returns documentation."""
     template = Template("sample", {"@id": "{sample}", "@type": "cameo:Sample"})
     pattern = Pattern(
         "Armel/characterizations/GDmass/{sample}",
-        {"sampleId": "{sample}"},
         {"sample": template},
+        {"vars": {"sampleId": "{sample}"}},
     )
     env = {"rootdir": "."}
     result = pattern.document("Armel/characterizations/GDmass/ARP001", env)
@@ -80,28 +200,29 @@ def test_pattern_document_returns_empty_for_non_matching_path():
 def test_pattern_document_sets_file_metadata():
     """Test Pattern.document() populates file metadata (fullpath, filename,
     etc)."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        testfile = tmppath / "test.txt"
-        testfile.write_text("test")
+    testdir = mktestdir("test_pattern_document_sets_file_metadata")
+    testfile = testdir / "test.txt"
+    testfile.write_text("test")
 
-        pattern = Pattern(
-            "{name}.txt",
-            {},
-            {"file": Template("file", {"filename": "{filename}"})},
-        )
-        env = {"rootdir": str(tmppath)}
-        result = pattern.document("test.txt", env)
+    pattern = Pattern(
+        "{name}.txt",
+        {"file": Template("file", {"filename": "{filename}"})},
+        {},
+    )
+    env = {"rootdir": str(testdir)}
+    result = pattern.document("test.txt", env)
 
-        assert result["file"]["filename"] == "test.txt"
+    assert result["file"]["filename"] == "test.txt"
+
+
+# --- Tests Treeweaver class ---
 
 
 def test_treeweaver_init_loads_config():
     """Test Treeweaver.__init__() loads configuration from YAML file."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        configfile = tmppath / "config.yaml"
-        configfile.write_text("""
+    testdir = mktestdir("test_treeweaver_init_loads_config")
+    configfile = testdir / "config.yaml"
+    configfile.write_text("""
 environment:
   prefix: "arp"
 templates:
@@ -113,19 +234,18 @@ patterns:
         sampleId: "{sample}"
 """)
 
-        tw = Treeweaver(configfile, rootdir=tmppath)
+    tw = Treeweaver(configfile, rootdir=testdir)
 
-        assert tw.env["prefix"] == "arp"
-        assert "sample" in tw.templates
-        assert len(tw.patterns) > 0
+    assert tw.env["prefix"] == "arp"
+    assert "sample" in tw.templates
+    assert len(tw.patterns) > 0
 
 
 def test_treeweaver_parse_conf_updates_templates():
     """Test Treeweaver.parse_conf() correctly parses and updates templates."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        configfile = tmppath / "config.yaml"
-        configfile.write_text("""
+    testdir = mktestdir("test_treeweaver_parse_conf_updates_templates")
+    configfile = testdir / "config.yaml"
+    configfile.write_text("""
 environment:
   prefix: "test"
 templates:
@@ -135,20 +255,19 @@ templates:
 patterns: []
 """)
 
-        tw = Treeweaver(configfile, rootdir=tmppath)
+    tw = Treeweaver(configfile, rootdir=testdir)
 
-        assert "sample" in tw.templates
-        assert tw.templates["sample"].stencils["title"] == "{sampleId}"
+    assert "sample" in tw.templates
+    assert tw.templates["sample"].stencils["title"] == "{sampleId}"
 
 
 def test_treeweaver_document_path_single_pattern():
     """Test Treeweaver.document_path() documents a single path."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        configfile = tmppath / "config.yaml"
-        configfile.write_text(f"""
+    testdir = mktestdir("test_treeweaver_document_path_single_pattern")
+    configfile = testdir / "config.yaml"
+    configfile.write_text(f"""
 environment:
-  rootdir: {tmppath}
+  rootdir: {testdir}
 templates:
   sample:
     "@id": "{{sampleId}}"
@@ -158,24 +277,22 @@ patterns:
         sampleId: "{{sample}}"
 """)
 
-        tw = Treeweaver(configfile, rootdir=tmppath)
-        result = tw.document_path("ARP001")
+    tw = Treeweaver(configfile, rootdir=testdir)
+    result = tw.document_path("ARP001")
 
-        assert "sample" in result
-        assert isinstance(result["sample"], list)
+    assert "sample" in result
+    assert isinstance(result["sample"], list)
 
 
 def test_treeweaver_document_recursively_traverses_tree():
     """Test Treeweaver.document() recursively traverses directory tree."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        (tmppath / "sample1").mkdir()
-        (tmppath / "sample2").mkdir()
-
-        configfile = tmppath / "config.yaml"
-        configfile.write_text(f"""
+    testdir = mktestdir("test_treeweaver_document_recursively_traverses_tree")
+    (testdir / "sample1").mkdir()
+    (testdir / "sample2").mkdir()
+    configfile = testdir / "config.yaml"
+    configfile.write_text(f"""
 environment:
-  rootdir: {tmppath}
+  rootdir: {testdir}
 templates:
   dir:
     name: "{{name}}"
@@ -185,41 +302,17 @@ patterns:
         name: "{{dir_name}}"
 """)
 
-        tw = Treeweaver(configfile, rootdir=tmppath)
-        result = tw.document(tmppath)
+    tw = Treeweaver(configfile, rootdir=testdir)
+    result = tw.document_tree(testdir)
 
-        assert "dir" in result
-        assert len(result["dir"]) >= 2
-
-
-def test_treeweaver_totables_converts_to_tables():
-    """Test Treeweaver.totables() converts documents to Tables object."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = Path(tmpdir)
-        (tmppath / "ARP001").mkdir()
-
-        configfile = tmppath / "config.yaml"
-        configfile.write_text("""
-templates:
-  sample:
-    "@id": "{sampleId}"
-patterns:
-  - "{sample}":
-      vars:
-        sampleId: {sample}
-""")
-
-        tw = Treeweaver(configfile, rootdir=tmppath)
-        tables = tw.totables(tmppath)
-
-        assert isinstance(tables, Tables)
-        assert len(tables.tables) > 0
+    assert "dir" in result
+    assert len(result["dir"]) >= 2
 
 
 @pytest.mark.filterwarnings("ignore:Format.*tables.:UserWarning")
 def test_treeweaver_savedoc_writes_file():
     """Test Treeweaver.savedoc() writes documentation to file."""
-    testdir = outdir / "test_treeweaver_savedoc_writes_file"
+    testdir = mktestdir("test_treeweaver_savedoc_writes_file")
     rootdir = testdir / "Characterisation"
     (rootdir / "ARP001").mkdir(parents=True, exist_ok=True)
     configfile = testdir / "config.yaml"
@@ -237,7 +330,7 @@ patterns:
     tw = Treeweaver(configfile, rootdir=rootdir)
     outfile = testdir / "sample.csv"
 
-    tw.savedoc(rootdir, testdir, format="csv")
+    tw.savedoc(rootdir, testdir, outformat="csv")
 
     assert outfile.exists()
     lines = outfile.read_text().split(os.linesep)
@@ -269,7 +362,13 @@ patterns:
 ARP001,chameo:Sample,Some docs
 """)
     tw = Treeweaver(configfile, rootdir=rootdir)
-    tw.savedoc(rootdir, testdir, format="csv")
+    tw.savedoc(rootdir, testdir, outformat="csv")
+
+
+def test_treeweaver_savedoc_armel():
+    """Test documenting Armel's data."""
+    tw = Treeweaver(datadir / "Armel.yaml")
+    tw.savedoc(datadir, outdir / "Armel.xlsx", mode="overwrite")
 
 
 def test_treeweaver_savedoc_andreas():
@@ -278,10 +377,20 @@ def test_treeweaver_savedoc_andreas():
     tw.savedoc(datadir, outdir / "Andreas.xlsx", mode="overwrite")
 
 
-def test_treeweaver_savedoc_armel():
-    """Test documenting Armel's data."""
-    tw = Treeweaver(datadir / "Armel.yaml")
-    tw.savedoc(datadir, outdir / "Armel.xlsx", mode="overwrite")
+def test_treeweaver_savedoc_andreas2():
+    """Test documenting Andreas's data."""
+    source = Path("data") / "Andreas-sharepoint.xlsx"
+    if source.exists():
+        tw = Treeweaver(
+            datadir / "Andreas2.yaml", settings={"skip_unassigned": True}
+        )
+        tw.savedoc(
+            source=source,
+            output=outdir / "Andreas2.xlsx",
+        )
+
+
+# --- Tests functions ---
 
 
 def test_totable_converts_dicts_to_table():

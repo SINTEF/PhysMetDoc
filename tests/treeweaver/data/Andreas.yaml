@@ -30,13 +30,27 @@ environment:
 # Patterns matching
 # Variables will be assigned
 patterns:
-- "{sample:.4}/{instrument}/{technique}/{experiment:underscored}":
+- "Andreas/{sample}/{instrument}/{technique}/{experiment}":
+    match: "Andreas/{JM1?,JO11}/**"
     vars:
       sampleId: "{sample}"
       datasetId: "data-{sample}-{technique}-{experiment}"
       measurementId: "{sample}-{technique}-{experiment}"
-      equipmentId: "emlab:{instrument}"  # TODO: map this to equipment list
       processedFrom: "{prefix}:{sample}"
+    mappings:
+      "equipmentId:instrument":
+        SEM: "emlab:SemA"                 # ???
+        SIMS: "emlab:SIMS"                # ???
+        LOM: "emlab:LOM"                  # ???
+        EPMA: "emlab:EMPA"
+        Synchrotron: "emlab:Synchrotron"  # ???
+      "techniqueId:technique":
+        EDS: "chameo:EnergyDispersiveXraySpectroscopy"
+        Imaging: "chameo:ScanningElectronMicroscopy"
+        EPMA: "chameo:ElectronProbeMicroanalysis"
+        SIMS: "chameo:SecondaryIonMassSpectrometry"
+        Synchrotron: "chameo:SynchrotronXRayDiffraction"
+        EBSD: "chameo:ElectronBackscatterDiffraction"
 
 
 # List of file patterns to exclude from documentation
@@ -96,4 +110,4 @@ templates:
     hasOutput: "{prefix}:{datasetId}"
     hasOperator: "{operator}"
     hasParticipant: "{equipmentId}"
-    #hasTechnique: "{technique}"
+    hasTechnique: "{techniqueId}"

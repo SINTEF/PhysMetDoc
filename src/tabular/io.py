@@ -100,7 +100,7 @@ def read(
     if sheets:
         tables = collection.__class__()
         for sheet in sheets:
-            tables.append_table(collection[sheet])
+            tables.append(collection[sheet])
         collection = tables
 
     return collection

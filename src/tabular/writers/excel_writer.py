@@ -75,7 +75,7 @@ class ExcelWriter(BaseWriter):
 
         wb = _OPENPYXL.Workbook()
 
-        if "Sheet" in wb.sheetnames:
+        if collection.tables and "Sheet" in wb.sheetnames:
             wb.remove(wb["Sheet"])
 
         for i, table in enumerate(collection.tables):

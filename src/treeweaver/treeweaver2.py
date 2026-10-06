@@ -3,14 +3,18 @@
 # pylint: disable=too-few-public-methods
 
 import argparse
+import importlib
 import re
+import warnings
 from collections import defaultdict
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
 import parse
 import yaml
+from wcmatch import glob
 
 import tabular.io
 from tabular import Table, Tables
@@ -21,30 +25,45 @@ PathType = Union[Path, str]
 ValueType = Union[str, list, dict, bool, int, float, None]  # template values
 
 
+class PatternSpecError(Exception):
+    """Error in pattern specification."""
+
+
 # Parse formatters
-def underscored(string: str):
+def underscored(string: str) -> str:
     """Parse formatter that converts blanks to underscore."""
     return string.replace(" ", "_")
 
 
-def escaped(string: str):
+def escaped(string: str) -> str:
     """Parse formatter that converts blanks to %-encoded."""
     # Alternatively we could use urllib.parse.quote()
     return string.replace(" ", "%20")
 
 
-def xstrip(string: str):
+def xstrip(string: str) -> str:
     """Strip file extension and replace blanks with underscore."""
     return re.sub(r"\.\w+$", "", string).replace(" ", "_")
 
 
+def component(string: str) -> str:
+    """Parse a file component (not matching a directory separator)."""
+    return string
+
+
 underscored.pattern = "[^/]+"  # type: ignore[attr-defined]
 escaped.pattern = "[^/]+"  # type: ignore[attr-defined]
+component.pattern = "[^/]+"  # type: ignore[attr-defined]
 parse_formatters = {
     "underscored": underscored,
     "escaped": escaped,
     "xstrip": xstrip,
+    "component": component,
 }
+
+
+class UnassignedVariableError(KeyError):
+    """Raised if a variable needed in a template has not been assigned."""
 
 
 class Template:
@@ -79,10 +98,11 @@ class Template:
                     if s := substitute(stencil, env):
                         doc[keyword] = s
                 except KeyError as exc:
-                    raise KeyError(  # pylint: disable=raise-missing-from
-                        f"Variable '{exc}' in stencil substitution for "
+                    # pylint: disable=raise-missing-from
+                    raise UnassignedVariableError(
+                        f"Variable {exc} in stencil substitution for "
                         f"'{keyword}' is not assigned in pattern for "
-                        f"template: '{self.name}'"
+                        f"template '{self.name}'"
                     )
         return doc
 
@@ -94,15 +114,123 @@ class Pattern:
         pattern: Wildcard pattern a directory or file path.
         templates: Dict mapping template names to Template instances that this
             pattern applies to.
-        vars: Dict defining variable definitions for updating the
-            environment.
+        spec: Dict with pattern specifications.
 
     """
 
-    def __init__(self, pattern: str, vars: dict, templates: dict) -> None:
-        self.pattern = parse.compile(pattern, extra_types=parse_formatters)
-        self.vars = vars
-        self.templates = templates
+    # pylint: disable=too-many-instance-attributes
+
+    def __init__(self, pattern: str, templates: dict, spec: dict) -> None:
+        s = spec.copy()
+        # Pre-process pattern
+        self.patt = pattern  # un-processed
+        processed = re.sub(r"\{([^:}]*)\}", r"{\1:component}", pattern)
+        self.pattern = parse.compile(processed, extra_types=parse_formatters)
+
+        # pylint: disable=invalid-name
+        self.appliesTo = s.pop("appliesTo", templates.keys())
+
+        self.matchfilter = (
+            globcompile(s.pop("match")) if "match" in s else None
+        )
+        self.excludefilters = [globcompile(e) for e in s.pop("exclude", ())]
+
+        self.mappings = {}
+        for key, maps in s.pop("mappings", {}).items():
+            newvar, var = key.split(":") if ":" in key else (key, key)
+            self.mappings[(newvar, var)] = {
+                parse.compile(k): v for k, v in maps.items()
+            }
+
+        self.callspecs = []
+        for callfunc in s.pop("call", []):
+            funcspec, args = next(iter(callfunc.items()))
+            module, func = funcspec.split(":")
+            self.callspecs.append(
+                {
+                    "func": getattr(importlib.import_module(module), func),
+                    "args": args if args else {},
+                }
+            )
+
+        self.vars = s.pop("vars", {})
+
+        self.templates = {name: templates[name] for name in self.appliesTo}
+
+        if s:
+            raise ValueError(
+                f"unknown specifications for pattern '{pattern}': "
+                f"{', '.join(s.keys())}"
+            )
+
+    def match(self, path: PathType) -> bool:
+        """Return whether `path` matches optional match (but not
+        exclude) filters."""
+        for excludefilter in self.excludefilters:
+            if excludefilter.match(path):
+                return False
+        if self.matchfilter:
+            return self.matchfilter.match(path)
+        return True
+
+    def assign_computed_variables(self, path: PathType, env: dict) -> None:
+        """Update `env` with computed variables.
+
+        Arguments:
+            path: Directory or file path to document.
+            env: Environment to update.
+        """
+        root = Path(env.get("rootdir", "."))
+        p = root / path
+        if p.exists():
+            ctime = datetime.fromtimestamp(p.stat().st_ctime).isoformat()
+            mtime = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
+        else:
+            ctime = mtime = ""
+        env.setdefault("fullpath", str(p))
+        env.setdefault("escapedpath", str(p).replace(" ", "%20"))
+        env.setdefault("filename", p.name)
+        env.setdefault("dirname", str(p.parent))
+        env.setdefault("ctime", ctime)
+        env.setdefault("mtime", mtime)
+        env.setdefault("pattern", self.pattern.format)
+
+    def assign_mappings(self, path: PathType, env: dict):
+        """Update `env` with mappings.
+
+        Arguments:
+            env: Environment to update.
+        """
+        for (newvar, var), maps in self.mappings.items():
+            if var not in env:
+                raise PatternSpecError(
+                    f"In mappings for pattern '{self.patt}': variable "
+                    f"'{var}' is not in environment.\n"
+                    f"Path: '{path}'"
+                )
+            for k, v in maps.items():
+                if r := k.parse(env[var]):
+                    env[newvar] = v.format(**r.named)
+                    break
+            else:
+                raise PatternSpecError(
+                    f"In mappings for pattern '{self.patt}': no "
+                    f"matching mapping for variable '{var}={env[var]}'.\n"
+                    f"Path: '{path}'"
+                )
+
+    def assign_from_call(self, path: PathType, env: dict):
+        """Update `env` from calling functions described in the call
+        field in the configuration of a pattern.
+
+        Arguments:
+            path: Directory or file path to document.
+            env: Environment to update.
+        """
+        for callspec in self.callspecs:
+            func = callspec["func"]
+            args = callspec["args"]
+            env.update(func(Path(path), env, **args))
 
     def document(self, path: PathType, env: dict) -> dict:
         """Document a directory or file path.
@@ -115,23 +243,17 @@ class Pattern:
             A dict mapping template names to JSON-LD documents.
             If `path` doesn't matche the pattern an empty dict is returned.
         """
-        docs = {}
+        docs: dict = {}
+        if not self.match(path):
+            return docs
         if r := self.pattern.parse(str(path)):
             e = env.copy()
             e.update(r.named)
-            p = Path(e.get("rootdir", ".")) / path
-            if p.exists():
-                ctime = datetime.fromtimestamp(p.stat().st_ctime).isoformat()
-                mtime = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
-            else:
-                ctime = mtime = ""
-            e.setdefault("fullpath", str(p))
-            e.setdefault("escapedpath", str(p).replace(" ", "%20"))
-            e.setdefault("filename", p.name)
-            e.setdefault("dirname", str(p.parent))
-            e.setdefault("ctime", ctime)
-            e.setdefault("mtime", mtime)
-            e.setdefault("pattern", self.pattern.format)
+
+            self.assign_computed_variables(path, e)
+            self.assign_mappings(path, e)
+            self.assign_from_call(path, e)
+
             e.update({k: substitute(v, e) for k, v in self.vars.items() if v})
             for name, template in self.templates.items():
                 docs[name] = template.substitute(e)
@@ -139,13 +261,28 @@ class Pattern:
 
 
 class Treeweaver:
-    """Class for documenting a directory structure."""
+    """Class for documenting a directory structure.
+
+    Arguments:
+        configfile: YAML configuration file.
+        rootdir: Root directory for the documented data. Defaults to the
+            directory of `configfile`.
+        settings: Dict with settings. See below for details.
+
+    Notes:
+        The settings has currently the following keys:
+        - skip_unassigned (bool): Whether to skip documenting a path, if a
+          variable needed by a template has not been assigned.
+
+    """
 
     def __init__(
         self,
         configfile: PathType,
         rootdir: Optional[PathType] = None,
+        settings: Optional[Mapping] = None,
     ) -> None:
+        self.settings = dict(settings) if settings else {}
         self.env: dict = {}
         self.templates: dict = {}
         self.patterns: list = []
@@ -164,15 +301,12 @@ class Treeweaver:
             self.templates.update(
                 {name: Template(name, v) for name, v in templates.items()}
             )
-            self.exclude.extend(d.get("exclude", ()))
+            self.exclude.extend([globcompile(e) for e in d.get("exclude", ())])
+
             self.patterns = []
             for p in d.get("patterns", ()):
-                # pylint: disable=invalid-name
-                pattern, updates = next(iter(p.items()))
-                vars = updates.get("vars", {})
-                appliesTo = updates.get("appliesTo", self.templates.keys())
-                templates = {name: self.templates[name] for name in appliesTo}
-                self.patterns.append(Pattern(pattern, vars, templates))
+                pattern, spec = next(iter(p.items()))
+                self.patterns.append(Pattern(pattern, self.templates, spec))
 
     def document_path(self, path: PathType) -> dict:
         """Document a directory or file path.
@@ -185,11 +319,92 @@ class Treeweaver:
         """
         docs = defaultdict(list)
         for pattern in self.patterns:
-            for k, v in pattern.document(path, self.env).items():
+            try:
+                d = pattern.document(path, self.env)
+            except UnassignedVariableError as exc:
+                msg = f"When documenting '{path}': {str(exc)[1:-1]}"
+                if self.settings.get("skip_unassigned", False):
+                    warnings.warn(msg)
+                    continue
+                # pylint: disable=raise-missing-from
+                raise UnassignedVariableError(msg)
+            for k, v in d.items():
                 docs[k].append(v)
         return dict(docs)
 
-    def document(self, rootdir: PathType) -> dict:
+    def document_pathtable(
+        self,
+        filename: PathType,
+        format: Optional[str] = None,  # pylint: disable=redefined-builtin
+        sheet: Union[str, int] = 1,
+        reader_param: Optional[dict] = None,
+        mappings: Optional[dict] = None,
+    ) -> dict:
+        """Document a file paths listed in a table.
+
+        This method is intended to be used with Excel and the
+        [Power Query SharePoint Folder or List connector].
+
+        Arguments:
+            filename: File name of table with paths to document.
+            format: Format to read.
+            sheet: Name or number (starting from zero) of the sheet to load.
+            reader_param: Additional parameters sent to the reader.
+            mappings: Optional dict mapping column names to the following
+                default column names:
+                - "File Name"
+                - "Modification date"
+                - "Creation date"
+                - "Path"
+
+        Returns:
+            A dict mapping template names to JSON-LD documents.
+
+        SeeAlso:
+            https://support.microsoft.com/en-us/excel/import-data-from-data-sources-power-query
+        """
+        # pylint: disable=too-many-locals
+        rparam = reader_param if reader_param else {}
+        maps = mappings if mappings else {}
+        table = Table.read(filename, format=format, sheet=sheet, **rparam)
+        docs = defaultdict(list)
+        seen = set()
+
+        def getval(row, colname):
+            if (key := maps.get(colname, colname)) in table.headers:
+                return row[table.headers.index(key)]
+            return None
+
+        def subpaths(path):
+            paths = []
+            for p in [path] + list(path.parents):
+                if p in seen:
+                    break
+                seen.add(p)
+                paths.append(p)
+            return paths
+
+        for row in table:
+            if val := getval(row, "Modification date"):
+                self.env["mtime"] = val
+            if val := getval(row, "Creation date"):
+                self.env["ctime"] = val
+
+            dirpath = Path(getval(row, "Path"))
+            filepath = dirpath / getval(row, "File Name")
+            relpath = (
+                filepath.relative_to(self.env["baseURL"])
+                if "baseURL" in self.env
+                else filepath
+            )
+
+            for path in subpaths(relpath):
+                for k, v in self.document_path(path).items():
+                    docs[k].extend(v)
+
+        return docs
+
+    def document_tree(self, rootdir: PathType) -> dict:
         """Document a directory tree.
 
         Arguments:
@@ -204,7 +419,7 @@ class Treeweaver:
         for path in root.rglob("*"):
             skip = False
             for exclude_pattern in self.exclude:
-                if path.match(exclude_pattern):
+                if exclude_pattern.match(path):
                     skip = True
             if not skip:
                 relpath = path.relative_to(root)
@@ -213,7 +428,7 @@ class Treeweaver:
         return dict(docs)
 
     def totables(
-        self, rootdir: PathType, oldtables: Optional[Tables] = None
+        self, docs: dict, oldtables: Optional[Tables] = None
     ) -> Tables:
         """Create table documentation of directory tree.
 
@@ -222,7 +437,7 @@ class Treeweaver:
         processing.
 
         Arguments:
-            rootdir: Root directory of the directory tree to document.
+            docs: Dict mapping template names to JSON-LD documents.
             oldtables: Old versions of the generated tables. If given,
                 columns in `oldtables` that doesn't exists in the generated
                 tables will be included in the generated tables.
@@ -231,7 +446,7 @@ class Treeweaver:
             A Tables object containing one table per template type.
         """
         tables = Tables()
-        for name, docs in self.document(rootdir).items():
+        for name, doc in docs.items():
             if oldtables is None:
                 oldtable = None
             elif len(oldtables) == 1:
@@ -240,28 +455,39 @@ class Treeweaver:
                 oldtable = oldtables[name]
             else:
                 oldtable = None
-            table = totable(docs, name=name, oldtable=oldtable)
+            table = totable(doc, name=name, oldtable=oldtable)
             tables.append(table)
         return tables
 
     def savedoc(
         self,
-        rootdir: PathType,
-        path: PathType,
-        format: Optional[str] = None,  # pylint: disable=redefined-builtin
+        source: PathType,
+        output: PathType,
+        informat: Optional[str] = None,
+        sheet: Union[str, int] = 1,
+        mappings: Optional[dict] = None,
+        reader_param: Optional[dict] = None,
+        outformat: Optional[str] = None,
         mode: str = "update",
         **kwargs,
     ) -> None:
-        """Document a directory tree and save created tables to file.
-
-        Documents a directory tree and writes the results to a file
-        in the specified format (or inferred from the file extension).
+        """Like savedoc(), but gets the paths to document from a table
+        instead from a directory tree.
 
         Arguments:
-            rootdir: Root directory of the directory tree to document.
-            path: Output path. Format is inferred from the file extension
+            source: File name of table with paths to document.
+            output: Output path. Format is inferred from the file extension
                 unless explicitly provided via `format`.
-            format: Output format. Any format supported by tabular.
+            informat: Format of ` filename` to read.
+            sheet: Name or number (starting from zero) of the sheet to load.
+            reader_param: Additional parameters sent to the reader.
+            mappings: Optional dict mapping column names to the following
+                default column names:
+                - "File Name"
+                - "Modification date"
+                - "Creation date"
+                - "Path"
+            outformat: Output format. Any format supported by tabular.
                 Single-file formats: xlsx, json
                 Multi-file formats: csv
                 If not provided, format is inferred from `path` file extension.
@@ -272,25 +498,44 @@ class Treeweaver:
             **kwargs: Additional keyword arguments passed to the Tables.write()
                 method.
         """
+        # pylint: disable=too-many-positional-arguments,too-many-locals
+        # pylint: disable=too-many-arguments
         singlefile_formats = set(["csv"])
-        p: Path = Path(path)
-        if format is None:
+        s = Path(source)
+        if s.is_dir():
+            docs = self.document_tree(s)
+        else:
+            docs = self.document_pathtable(
+                s,
+                format=informat,
+                sheet=sheet,
+                reader_param=reader_param,
+                mappings=mappings,
+            )
+
+        p: Path = Path(output)
+        if outformat is None:
             if p.is_dir():
                 raise ValueError(
                     "`format` is required when `path` is a directory"
                 )
-            format = p.suffix.lstrip(".")
+            outformat = p.suffix.lstrip(".")
         if mode == "update" and p.exists():
-            if p.is_dir() and format.lower() in singlefile_formats:
+            if p.is_dir() and outformat.lower() in singlefile_formats:
                 oldtables = Tables()
-                for filename in p.glob(f"*.{format}"):
+                for filename in p.glob(f"*.{outformat}"):
                     oldtables.append(Tables.read(filename))
             else:
-                oldtables = tabular.io.read(p, format=format, **kwargs)
-            tables = self.totables(rootdir, oldtables=oldtables)
+                oldtables = tabular.io.read(p, format=outformat, **kwargs)
+            tables = self.totables(docs, oldtables=oldtables)
         else:
-            tables = self.totables(rootdir)
-        tables.write(p, format=format, **kwargs)
+            tables = self.totables(docs)
+        tables.write(p, format=outformat, **kwargs)
+
+
+def globcompile(pattern):
+    """Return compiled glob pattern."""
+    return glob.compile(pattern, flags=glob.CASE | glob.GLOBSTAR | glob.BRACE)
 
 
 def totable(
@@ -321,7 +566,6 @@ def totable(
         A Table object with headers from all unique keys across the input
         dictionaries, and rows in the order of the input list.
     """
-    # headers: dict = {}  # use dict instead of set to keep ordering
     dicts = list(dicts)  # in case dicts is a iterator
     headers = {}
     for d in dicts:
@@ -368,14 +612,22 @@ def substitute(stencil: ValueType, env: dict) -> ValueType:
     raise TypeError("Unsupported stencil type:", type(stencil))
 
 
-def main():
-    """Main function for the command-line interface."""
+def main(argv: Optional[list[str]] = None):
+    """Main function for the command-line interface.
+
+    Arguments:
+        argv: List of strings to parse. Mainly used for testing.
+            Defaults to ` sys.argv`.
+    """
     parser = argparse.ArgumentParser(
         description="Discover datadoc entries from a structured directory."
     )
     parser.add_argument(
-        "rootdir",
-        help="Root directory of the file structure to be documented.",
+        "source",
+        help=(
+            "Either root directory of the file structure to be documented "
+            "or table with file paths to be documented."
+        ),
     )
     parser.add_argument(
         "--configfile",
@@ -384,6 +636,11 @@ def main():
             "Configuration YAML file. Default is `treeweaver2.yaml` in "
             "`rootdir`."
         ),
+    )
+    parser.add_argument(
+        "--sheet",
+        "-s",
+        help="Sheet to read if `source` is a file name.",
     )
     parser.add_argument(
         "--format",
@@ -402,10 +659,18 @@ def main():
             "a directory for multi-file formats."
         ),
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    tw = Treeweaver(args.configfile)
-    tw.savedoc(rootdir=args.rootdir, path=args.output, format=args.format)
+    source = Path(args.source)
+    rootdir = source if source.is_dir() else source.parent
+    defaultconf = rootdir / "treeweaver2.yaml"
+    tw = Treeweaver(args.configfile if args.configfile else defaultconf)
+    tw.savedoc(
+        source=source,
+        output=args.output,
+        sheet=args.sheet,
+        outformat=args.format,
+    )
 
 
 if __name__ == "__main__":

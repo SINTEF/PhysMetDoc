@@ -184,7 +184,9 @@ def merge_configs(parent, child):
 
     return Config(
         root=child.root,
-        version=child.version if child.version is not None else parent.version,
+        version=(
+            child.version if child.version is not None else parent.version
+        ),
         prefixes={**parent.prefixes, **child.prefixes},
         prune_rules=parent.prune_rules + child.prune_rules,
         intents=intents,
