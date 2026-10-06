@@ -95,6 +95,6 @@ class ExcelReader(BaseReader):
             table = self._convert_sheet_to_table(
                 sheet, sheet_name, infer_types
             )
-            tables.append_table(table)
+            tables.append(table)
 
         return tables

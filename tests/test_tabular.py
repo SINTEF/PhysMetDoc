@@ -23,7 +23,7 @@ def get_tmp_root() -> Path:
 
 
 TMP_ROOT = get_tmp_root()
-DATA_DIR = Path("./tests/data/tabular")
+DATA_DIR = Path(__file__).resolve().parent / "data" / "tabular"
 FILE_CSV = DATA_DIR / "complex_data.csv"
 FILE_EXCEL = DATA_DIR / "complex_data.xlsx"
 
@@ -115,7 +115,7 @@ def test_symmetric_read_write_directory_workflow():
 
     # Demonstrate merging logic before writing back
     new_table = Table("SheetC", ["ID", "Val"], [[3, "C"]])
-    reloaded_tables.append_table(new_table)
+    reloaded_tables.append(new_table)
 
     tabular.write(reloaded_tables, target_path)
 
@@ -353,9 +353,9 @@ def test_tables_append_from_file_and_write():
     ts = Tables()
     new_data = tabular.read(FILE_CSV)
     for table in new_data.tables:
-        ts.append_table(table)
+        ts.append(table)
 
-    ts.append_table(Table("second_sheet", ["A"], [[1]]))
+    ts.append(Table("second_sheet", ["A"], [[1]]))
     split_csv_path = TMP_ROOT / "output.csv"
 
     tabular.write(ts, split_csv_path)

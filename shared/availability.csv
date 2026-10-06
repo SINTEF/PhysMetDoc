@@ -1,0 +1,5 @@
+@id,@type,label,definition
+avail:AVAILABLE,auth:planned-availability,available,"Data is available for a few years, medium term planning."
+avail:EXPERIMENTAL,auth:planned-availability,experimental,"Data is available on a trial basis for a short period, short term planning."
+avail:STABLE,auth:planned-availability,stable,"Data will remain available in the long term."
+avail:TEMPORARY,auth:planned-availability,temporal,"Data can disappear at any time, no planning."
