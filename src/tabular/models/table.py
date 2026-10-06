@@ -4,9 +4,26 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Union,
+)
+
+PathType = Union[str, Path]
+IndexType = Union[int, str]
+
 
 logger = logging.getLogger(__name__)
+
+
+class NODEFAULT:
+    """Sentinel value indicating that no default has been provided."""
 
 
 class Table:
@@ -98,13 +115,13 @@ class Table:
             f"columns={len(self.headers)}, rows={len(self.rows)})>"
         )
 
-    def __getitem__(self, key: Union[int, str]) -> List[Any]:
+    def __getitem__(self, key: IndexType) -> List[Any]:
         """
         Allows indexing into the table to get a row or a column.
 
         Args:
-            key (Union[int, str]): An integer to get a row by index,
-                                   or a string to get a column by header name.
+            key (IndexType): An integer to get a row by index, or a string to
+                get a column by header name.
 
         Returns:
             List[Any]: The requested row or column.
@@ -139,9 +156,9 @@ class Table:
     @classmethod
     def read(
         cls,
-        path: Union[str, Path],
+        path: PathType,
         format: Optional[str] = None,
-        sheet: Union[str, int] = 0,
+        sheet: IndexType = 0,
         **kwargs: Any,
     ) -> Table:
         """
@@ -151,9 +168,9 @@ class Table:
         regardless of whether the path points to a file or a directory.
 
         Args:
-            path (Union[str, Path]): Path to the file or directory.
+            path (PathType): Path to the file or directory.
             format (Optional[str], optional): Format override.
-            sheet (Union[str, int]): Sheet name or number to read.
+            sheet (IndexType): Sheet name or number to read.
             **kwargs: Extra parameters passed to the reader.
 
         Returns:
@@ -179,7 +196,7 @@ class Table:
 
     def write(
         self,
-        path: Optional[Union[str, Path]] = None,
+        path: Optional[PathType] = None,
         format: Optional[str] = None,
         **kwargs: Any,
     ) -> Optional[str]:
@@ -187,7 +204,7 @@ class Table:
         Writes this Table directly to a file or returns a string.
 
         Args:
-            path (Optional[Union[str, Path]], optional): Destination path.
+            path (Optional[PathType], optional): Destination path.
             format (Optional[str], optional): Format override.
             **kwargs: Extra parameters passed to the writer.
 
@@ -216,7 +233,7 @@ class Table:
             )
             logger.error("%s", msg)
             raise ValueError(msg)
-        self.rows.append(row)
+        self.rows.append(list(row))
 
     def append_rows(self, rows: List[List[Any]]) -> None:
         """
@@ -280,3 +297,93 @@ class Table:
             List[Dict[str, Any]]: A list where each dict represents one row.
         """
         return [dict(zip(self.headers, row)) for row in self.rows]
+
+    def match_rows(
+        self,
+        columns: Union[IndexType, Sequence[IndexType]],
+        values: Union[Any, Sequence[Any]],
+    ) -> list:
+        """
+        Matches rows whose values in the specified columns equals `values`.
+
+        Args:
+            columns (Union[IndexType, Sequence[IndexType]]): One or more
+                columns to match against. May be specified by number or name.
+            values (Union[Any, Sequence[Any]]): Corresponding values to look
+                for. Must have the same length as `columns`.
+
+        Returns:
+            list: List of matching rows.
+
+        Raises:
+            ValueError: If an invalid column name is specified.
+            IndexError: If a colum index is out of range.
+        """
+        if isinstance(columns, (str, int)):
+            columns, values = [columns], [values]
+        rows = self.rows
+        for col, value in zip(columns, values):
+            i = self.headers.index(col) if isinstance(col, str) else col
+            rows = [row for row in rows if row[i] == value]
+        return rows
+
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
+    def lookup(
+        self,
+        columns: Union[IndexType, Sequence[IndexType]],
+        values: Union[Any, Sequence[Any]],
+        outcol: IndexType,
+        mode: Literal["unique", "all", "first"] = "all",
+        default: Any = NODEFAULT,
+    ) -> Any:
+        """
+        Looks up occurences of `value` in `columns` and return the
+        corresponding value(s) in `outcol`.
+
+        If no rows match the criteria, returns `default`.
+
+        Args:
+            columns (Union[IndexType, Sequence[IndexType]]): One or more
+                columns to match for. May be specified by number or name.
+            values (Union[Any, Sequence[Any]]): Corresponding values to look
+                for.  Must have the same length as `columns`.
+            outcol (IndexType): Column to return the corresponding value form.
+            mode (str): If `mode` is:
+                - "unique": Return unique lookup value. Raises LookupError if
+                      there is not exact one matching row.
+                - "all": Returns a list with all matching values.
+                      May be an empty list.
+                - "first": Returns the falue of the first matching row.
+                      Raises LookupError if there are no matching rows.
+            default (Any): Default value to return if no rows matches.
+
+        Returns:
+            Any: The value(s) in `outcol` based on the specified `mode`.
+
+        Raises:
+            ValueError: If an invalid column name or mode is specified.
+            IndexError: If a colum index is out of range.
+            LookupError: If there are too many or few matching rows (depending
+                on `mode`).
+        """
+        rows = self.match_rows(columns, values)
+        if not rows and default is not NODEFAULT:
+            return default
+
+        i = self.headers.index(outcol) if isinstance(outcol, str) else outcol
+        if mode == "unique":
+            if len(rows) != 1:
+                raise LookupError(
+                    f"expected only one matching row, got {len(rows)} for "
+                    f"{columns=} and {values=}"
+                )
+            return rows[0][i]
+        if mode == "all":
+            return [row[i] for row in rows]
+        if mode == "first":
+            if not rows:
+                raise LookupError("no matching rows")
+            return rows[0][i]
+        raise ValueError(
+            f'`mode` must be "unique", "all" or "first", got: "{mode}'
+        )
