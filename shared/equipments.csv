@@ -1,4 +1,4 @@
-@id,@type,identifier,name,description,location,contactPerson,comment,seeAlso
+@id,@type,identifier,name,description,location,contactPoint,comment,seeAlso
 temgemini:ARM200F,chameo:TransmissionElectronMicroscope,ARM200F,ARM200F,"Jeol JEM ARM200F - Double corrected ColdFEG microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
 temgemini:2100F,chameo:TransmissionElectronMicroscope,2100F,2100F,"Jeol JEM 2100F - FEG microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f
 temgemini:2100,chameo:TransmissionElectronMicroscope,2100,2100,"Jeol JEM 2100 - LaB6 microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100

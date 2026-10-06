@@ -36,10 +36,11 @@ dev = [
 ]
 
 [project.scripts]
-extract-prefixes = "extract_prefixes:main"
-oold-converter = "oold_converter.oold_converter:main"
-compositions = "compositions.compositions:main"
 treeweaver = "treeweaver.treeweaver:main"
+treeweaver2 = "treeweaver.treeweaver2:main"
+oold-converter = "oold_converter.oold_converter:main"
+extract-prefixes = "extract_prefixes:main"
+compositions = "compositions.compositions:main"
 
 [build-system]
 requires = ["hatchling"]

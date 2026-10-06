@@ -2,7 +2,6 @@
   "@context": {
     "@version": 1.1,
     "ddoc": "https://w3id.org/emmo/application/datadoc#",
-    "rights": "http://publications.europa.eu/resource/authority/access-right/",
     "adms": "http://www.w3.org/ns/adms#",
     "dcat": "http://www.w3.org/ns/dcat#",
     "dcatap": "http://data.europa.eu/r5r/",
@@ -25,9 +24,15 @@
     "vann": "http://purl.org/vocab/vann/",
     "vcard": "http://www.w3.org/2006/vcard/ns#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
-
+    "auth": "http://publications.europa.eu/resource/authority/",
+    "accr": "http://publications.europa.eu/resource/authority/access-right/",
     "avail": "http://publications.europa.eu/resource/authority/planned-availability/",
+    "ordic": "https://orcid.org/",
+    "nvaid": "https://nva.sikt.no/research-profile/",
+    "ror": "https://ror.org/",
+
     "emmo": "https://w3id.org/emmo#",
+    "ssbd": "https://w3id.org/ssbd/",
     "oteio": "https://w3id.org/emmo/domain/oteio#",
     "chameo": "https://w3id.org/emmo/domain/characterisation-methodology/chameo#",
     "micro": "https://w3id.org/emmo/domain/microstructure#",
@@ -62,6 +67,22 @@
       "@id": "dcterms:rightsHolder",
       "@type": "@id"
     },
+    "priorRelease": {
+      "@id": "ssbd:priorRelease",
+      "@type": "@id"
+    },
+    "contactPoint": {
+      "@id": "ddoc:contactPoint",
+      "@type": "@id"
+    },
+    "note": {
+      "@id": "skos:scopeNote",
+      "@type": "@id"
+    },
+    "location": {
+      "@id": "dcterms:spatial",
+      "@type": "@id"
+    },
     "processedFrom": {
       "@id": "emmo:EMMO_7821eeb8_5e44_452b_90e9_3db03bbef241",
       "@type": "@id"
@@ -91,7 +112,7 @@
       "@type": "@id"
     },
     "hasOperator": {
-      "@id": "chamio:hasOperator",
+      "@id": "chameo:hasOperator",
       "@type": "@id"
     },
     "performedWith": {
@@ -114,10 +135,6 @@
     },
     "conformsTo": {
       "@id": "dcterms:conformsTo",
-      "@type": "@id"
-    },
-    "contactPoint": {
-      "@id": "dcat:contactPoint",
       "@type": "@id"
     },
     "contributor": {

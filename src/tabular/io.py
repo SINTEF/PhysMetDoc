@@ -92,7 +92,7 @@ def read(
             if collection is None:
                 collection = sub_tables.__class__()
             for table in sub_tables.tables:
-                collection.append_table(table)
+                collection.append(table)
     else:
         logger.info("Reading file '%s' as format '%s'", file_path, actual_fmt)
         collection = reader.read(file_path, **kwargs)
@@ -145,7 +145,7 @@ def write(
 
     if out_path is not None and not supports_multi_sheet(actual_fmt):
         tables_list = getattr(data, "tables", None)
-        if tables_list is not None and len(tables_list) > 1:
+        if tables_list is not None:
             target_dir = (
                 out_path.with_suffix("") if out_path.suffix else out_path
             )

@@ -1,5 +1,5 @@
 @id,@type,name,prefix,namespace,email,affiliation,sameAs,sameAs
-pers:AndreasVollBugten,foaf:Person,"Andreas Voll Bugten",avb,https://www.ntnu.edu/physmet/data/avb/,,org:NTNU,orcid:0000-0003-0311-8584,nnvaid:978376
+pers:AndreasVollBugten,foaf:Person,"Andreas Voll Bugten",avb,https://www.ntnu.edu/physmet/data/avb/,,org:NTNU,orcid:0000-0003-0311-8584,nvaid:978376
 pers:MarisaDiSabatino,foaf:Person,"Marisa Di Sabatino",,,marisa.di.sabatino@ntnu.no,org:NTNU,orcid:0000-0001-9306-414X,
 pers:JesperFriis,foaf:Person,"Jesper Friis",jfr,,jesper.friis@sintef.no,org:SINTEF,orcid:0000-0002-1560-809X,nvaid:40356
 pers:IngaDahlenKonow,foaf:Person,"Inga Dalen Konow",idk,https://www.ntnu.edu/physmet/data/idk/,inga.konow@ntnu.no,org:NTNU,orcid:0009-0005-4977-0908,
