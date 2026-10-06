@@ -6,7 +6,6 @@
 from __future__ import annotations
 
 import logging
-import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
 
@@ -21,7 +20,10 @@ logger = logging.getLogger(__name__)
 
 
 def read(
-    path: Union[str, Path], format: Optional[str] = None, **kwargs: Any
+    path: Union[str, Path],
+    format: Optional[str] = None,
+    sheets: Optional[list] = None,
+    **kwargs: Any,
 ) -> Tables:
     """
     Reads a tabular file or directory into a Tables collection.
@@ -37,6 +39,7 @@ def read(
     Args:
         path (Union[str, Path]): Path to a file or directory.
         format (Optional[str]): Optional format override (e.g. 'csv').
+        sheets (Union[str, int]): Name or number of selected sheets to load.
         **kwargs: Additional keyword arguments passed to the specific reader.
 
     Returns:
@@ -46,6 +49,7 @@ def read(
         ValueError: If format cannot be determined or reading fails.
         FileNotFoundError: If the specified path does not exist.
     """
+    # pylint: disable=too-many-locals
     file_path = Path(path)
 
     # Check if directory exists directly or as a stem fallback (for symmetry)
@@ -89,11 +93,17 @@ def read(
                 collection = sub_tables.__class__()
             for table in sub_tables.tables:
                 collection.append(table)
+    else:
+        logger.info("Reading file '%s' as format '%s'", file_path, actual_fmt)
+        collection = reader.read(file_path, **kwargs)
 
-        return collection
+    if sheets:
+        tables = collection.__class__()
+        for sheet in sheets:
+            tables.append_table(collection[sheet])
+        collection = tables
 
-    logger.info("Reading file '%s' as format '%s'", file_path, actual_fmt)
-    return reader.read(file_path, **kwargs)
+    return collection
 
 
 def write(
@@ -140,13 +150,12 @@ def write(
                 out_path.with_suffix("") if out_path.suffix else out_path
             )
 
-            msg = (
-                f"Format '{actual_fmt}' does not support multiple tables. "
-                f"A directory '{target_dir}' will be created containing "
-                "the individual tables."
+            logger.warning(
+                "Format '%s' does not support multiple tables. A directory "
+                "'%s' will be created containing the individual tables.",
+                actual_fmt,
+                target_dir,
             )
-            warnings.warn(msg, UserWarning, stacklevel=2)
-
             logger.info(
                 "Splitting data into individual '%s' files in directory '%s'",
                 actual_fmt,

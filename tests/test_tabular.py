@@ -103,8 +103,7 @@ def test_symmetric_read_write_directory_workflow():
     target_path = TMP_ROOT / "dataset.csv"
 
     # Writing multi-table CSV creates 'dataset' directory
-    with pytest.warns(UserWarning, match="does not support multiple tables"):
-        tabular.write(original_tables, target_path)
+    tabular.write(original_tables, target_path)
 
     # Re-reading exact same path loads split files from directory seamlessly
     # NOTE: NO explicit format="csv" is provided here. It infers it.
@@ -118,8 +117,7 @@ def test_symmetric_read_write_directory_workflow():
     new_table = Table("SheetC", ["ID", "Val"], [[3, "C"]])
     reloaded_tables.append(new_table)
 
-    with pytest.warns(UserWarning, match="does not support multiple tables"):
-        tabular.write(reloaded_tables, target_path)
+    tabular.write(reloaded_tables, target_path)
 
     # Again, read without explicit format
     updated_tables = tabular.read(target_path)
@@ -176,6 +174,18 @@ def test_excel_multi_sheet_and_inference():
     assert "Simple Data" in sheet_names
 
 
+def test_read_sheets():
+    """Test read selected sheets."""
+    tables = tabular.read(FILE_EXCEL, sheets=[1, 0])
+    assert tables.names == ["Simple Data", "Mixed Formats"]
+
+
+def test_table_read_sheet():
+    """Test read selected sheets."""
+    table = Table.read(FILE_EXCEL, sheet=0)
+    assert table.headers[0] == "ID"
+
+
 # --- Tests for Table / Tables Built-In Class Methods ---
 
 
@@ -187,12 +197,6 @@ def test_table_class_read_and_write():
     out_path = TMP_ROOT / "class_write_test.csv"
     t.write(out_path)
     assert out_path.exists()
-
-
-def test_table_read_raises_on_multi_sheet():
-    """Verify Table.read raises an error if multiple tables exist."""
-    with pytest.raises(ValueError, match="Expected a single table"):
-        Table.read(FILE_EXCEL)
 
 
 def test_tables_class_read_and_write():
@@ -354,8 +358,7 @@ def test_tables_append_from_file_and_write():
     ts.append(Table("second_sheet", ["A"], [[1]]))
     split_csv_path = TMP_ROOT / "output.csv"
 
-    with pytest.warns(UserWarning, match="does not support multiple tables"):
-        tabular.write(ts, split_csv_path)
+    tabular.write(ts, split_csv_path)
 
     expected_dir = TMP_ROOT / "output"
     assert expected_dir.is_dir()
@@ -389,8 +392,7 @@ def test_csv_write_splits_multiple_tables():
     base_out_csv = TMP_ROOT / "split_output.csv"
     tables = tabular.read(FILE_EXCEL)
 
-    with pytest.warns(UserWarning, match="does not support multiple tables"):
-        tabular.write(tables, base_out_csv)
+    tabular.write(tables, base_out_csv)
 
     expected_dir = TMP_ROOT / "split_output"
     assert expected_dir.is_dir()
@@ -443,6 +445,46 @@ def test_json_unicode_formatting():
     tables = tabular.read(FILE_EXCEL)
     json_str = tabular.write(tables, format="json")
     assert "Bjørn Ærø" in str(json_str)
+
+
+def test_match_rows():
+    """Test match_rows method."""
+    t = Table(
+        "TestSheet",
+        ["ID", "Name", "Age"],
+        [(1, "Alice", 32), (2, "Bob", 33), (3, "Cyril", 33)],
+    )
+    assert t.match_rows("Name", "Bob") == [[2, "Bob", 33]]
+    assert t.match_rows("Age", 33) == [[2, "Bob", 33], [3, "Cyril", 33]]
+    assert t.match_rows("Age", 42) == []
+    assert t.match_rows(("Age", "Name"), (33, "Bob")) == [[2, "Bob", 33]]
+    assert t.match_rows((), ()) == [
+        [1, "Alice", 32],
+        [2, "Bob", 33],
+        [3, "Cyril", 33],
+    ]
+
+
+def test_lookup():
+    """Test lookup method."""
+    t = Table(
+        "TestSheet",
+        ["ID", "Name", "Age"],
+        [(1, "Alice", 32), (2, "Bob", 33), (3, "Cyril", 33)],
+    )
+    assert t.lookup("Name", "Bob", "ID") == [2]
+    assert t.lookup(1, "Bob", "ID") == [2]
+    assert t.lookup("Age", 33, "ID") == [2, 3]
+    assert t.lookup(2, 33, 0) == [2, 3]
+    assert t.lookup("Name", "Bob", "ID", mode="unique") == 2
+    assert t.lookup("Age", 33, "ID", mode="first") == 2
+    assert t.lookup("Age", 42, "ID", default=-1) == -1
+    with pytest.raises(LookupError):
+        t.lookup("Age", 33, "ID", mode="unique")
+    with pytest.raises(ValueError):
+        t.lookup("Non-existing", 33, "ID", mode="unique")
+    with pytest.raises(IndexError):
+        t.lookup(5, 33, "ID", mode="unique")
 
 
 # pylint: disable=duplicate-code

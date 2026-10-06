@@ -125,6 +125,16 @@ class Tables:
         return self._tables
 
     @property
+    def names(self) -> List[str | None]:
+        """
+        Retrieves table names.
+
+        Returns:
+            List[str]: A list of table names.
+        """
+        return [t.name for t in self._tables]
+
+    @property
     def first(self) -> Table:
         """
         Convenience property to retrieve the first table in the collection.
@@ -146,6 +156,7 @@ class Tables:
         cls,
         path: Union[str, Path],
         format: Optional[str] = None,
+        sheets: Optional[list] = None,
         **kwargs: Any,
     ) -> Tables:
         """
@@ -157,6 +168,8 @@ class Tables:
         Args:
             path (Union[str, Path]): Path to the file or directory.
             format (Optional[str], optional): Format override.
+            sheets (Union[str, int]): Name or number of selected sheets to
+                load.
             **kwargs: Extra parameters passed to the reader.
 
         Returns:
@@ -165,7 +178,7 @@ class Tables:
         # pylint: disable=import-outside-toplevel
         from tabular.io import read
 
-        return read(path, format=format, **kwargs)
+        return read(path, format=format, sheets=sheets, **kwargs)
 
     # --- Instance Methods ---
 
