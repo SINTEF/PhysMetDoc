@@ -103,6 +103,43 @@
       "@type": "@id"
     },
 
+    "conceptualisation": {
+      "@id": "emmo:conceptualisation",
+      "@language": "en"
+    },
+    "elucidation": {
+      "@id": "emmo:elucidation",
+      "@language": "en"
+    },
+    "hasDatum": {
+      "@id": "emmo:EMMO_b19aacfc_5f73_4c33_9456_469c1e89a53e",
+      "@type": "@id"
+    },
+    "isDescriptionFor": {
+      "@id": "emmo:EMMO_f702bad4_fc77_41f0_a26d_79f6444fd4f3",
+      "@type": "@id"
+    },
+    "isInputOf": {
+      "@id": "emmo:EMMO_1494c1a9_00e1_40c2_a9cc_9bbf302a1cac",
+      "@type": "@id"
+    },
+    "isOutputOf": {
+      "@id": "emmo:EMMO_2bb50428_568d_46e8_b8bf_59a4c5656461",
+      "@type": "@id"
+    },
+
+    "Dataset": {
+      "@id": "emmo:EMMO_194e367c_9783_4bf5_96d0_9ad597d48d9a",
+      "@type": "http://www.w3.org/2002/07/owl#Class"
+    },
+    "Measurement": {
+      "@id": "emmo:EMMO_463bcfda_867b_41d9_a967_211d4d437cfb",
+      "@type": "http://www.w3.org/2002/07/owl#Class"
+    },
+    "Sample": {
+      "@id": "chameo:Sample",
+      "@type": "http://www.w3.org/2002/07/owl#Class"
+    },
 
     "accessRights": {
       "@id": "dcterms:accessRights",
@@ -229,10 +266,6 @@
     },
     "bibliographicCitation": "dcterms:bibliographicCitation",
     "comment": "rdfs:comment",
-    "conceptualisation": {
-      "@id": "emmo:EMMO_31252f35_c767_4b97_a877_1235076c3e13",
-      "@language": "en"
-    },
     "conformance": {
       "@id": "ddoc:conformance",
       "@type": "@id"
@@ -244,10 +277,6 @@
     "domain": {
       "@id": "rdfs:domain",
       "@type": "@id"
-    },
-    "elucidation": {
-      "@id": "emmo:EMMO_967080e5_2f42_4eb2_a3a9_c58143e835f9",
-      "@language": "en"
     },
     "hiddenLabel": {
       "@id": "skos:hiddenLabel",
@@ -344,22 +373,6 @@
     "datamodelStorage": {
       "@id": "oteio:hasDatamodelStorage",
       "@type": "xsd:anyURI"
-    },
-    "hasDatum": {
-      "@id": "emmo:EMMO_b19aacfc_5f73_4c33_9456_469c1e89a53e",
-      "@type": "@id"
-    },
-    "isDescriptionFor": {
-      "@id": "emmo:EMMO_f702bad4_fc77_41f0_a26d_79f6444fd4f3",
-      "@type": "@id"
-    },
-    "isInputOf": {
-      "@id": "emmo:EMMO_1494c1a9_00e1_40c2_a9cc_9bbf302a1cac",
-      "@type": "@id"
-    },
-    "isOutputOf": {
-      "@id": "emmo:EMMO_2bb50428_568d_46e8_b8bf_59a4c5656461",
-      "@type": "@id"
     },
     "mappings": {
       "@id": "oteio:mapping",
@@ -499,10 +512,6 @@
     },
     "Resource": {
       "@id": "dcat:Resource",
-      "@type": "http://www.w3.org/2002/07/owl#Class"
-    },
-    "Dataset": {
-      "@id": "dcat:Dataset",
       "@type": "http://www.w3.org/2002/07/owl#Class"
     },
     "Distribution": {
