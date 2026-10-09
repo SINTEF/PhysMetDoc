@@ -82,7 +82,7 @@ class CSVReader(BaseReader):
                     self._sniff_dialect(f, path, kwargs)
 
                 table = self._read_rows(f, table_name, infer_types, kwargs)
-                collection.append_table(table)
+                collection.append(table)
 
         except UnicodeDecodeError as e:
             msg = (

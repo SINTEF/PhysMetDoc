@@ -47,7 +47,7 @@ class BaseWriter(ABC):
         """
         if isinstance(data, Table):
             collection = Tables()
-            collection.append_table(data)
+            collection.append(data)
             return collection
         return data
 

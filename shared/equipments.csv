@@ -1,17 +1,23 @@
-@id,@type,identifier,name,description,location,contactPerson,comment,seeAlso
-temgemini:ARM200F,chameo:TransmissionElectronMicroscope,ARM200F,ARM200F,"Jeol JEM ARM200F - Double corrected ColdFEG microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
-temgemini:2100F,chameo:TransmissionElectronMicroscope,2100F,2100F,"Jeol JEM 2100F - FEG microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f
-temgemini:2100,chameo:TransmissionElectronMicroscope,2100,2100,"Jeol JEM 2100 - LaB6 microscope",,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100
-emlab:SemA,chameo:ScanningElectronMicroscope,SemA,"Sem A",,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoSEM_A.pdf/bd8b7377-2d34-45b7-ae66-c51dfb57b73d
-emlab:LVSEM,chameo:ScanningElectronMicroscope,LVSEM,LV-SEM,,,,,https://www.ntnu.edu/documents/140082/1269041159/S-3400NSpecifications.pdf/6b94c26f-a9d4-4f36-82b3-7e9eb3603922
-emlab:FeSEM,chameo:ScanningElectronMicroscope,FeSEM,Fe-SEM,,,,,https://www.ntnu.edu/documents/140082/1269041159/Em-lab-ULTRA_Technical.pdf/aad80164-f671-4c14-81c8-3a42c45f9dd8
-emlab:EPMA,temgo:ElectronProbeMicroAnalyser,EPMA,Fe-SEM,,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoEPMA.pdf/13290111-9267-44d5-ab3e-20d9b9e13c6e
-emlab:FishionePlasmaCleaner,temgo:PlasmaCleaner,FishionePlasmaCleaner,"Fishione Plasma Cleaner",,,,,http://www.fischione.com/products/model_1020.asp
-emlab:AgarCoater,temgo:SEMSampleCoater,AgarCoater,"Agar Turbo Carbon Coater",,,,,
-emlab:IT800HL,chameo:ScanningElectronMicroscope,IT800HL,"SEM JEOL IT800HL",,,,,
-emlab:JeolCrossPolisher,temgo:CrossPolisher,JeolCrossPolisher,"JEOL - IB-19520CCP - Cross Polisher",,,,,
-emlab:HitachiIonMiller,temgo:IonMiller,HitachiIonMiller,"Hitachi IM3000 - Ion Miller",,,,,
-elkem:IronFurnance,temgo:Furnance,IronFurnance,Furnace,"Iron furnace",,,,
-elkem:TreatmentLadle,temgo:Ladle,TreatmentLadle,Ladle,,,,,
-elkem:InoculationCrucible,temgo:Crucible,InoculationCrucible,Crucible,,,,,
-elkem:MouldBars30mm,temgo:Mould,MouldBars30mm,"Sand mould",,,,,
+@id,@type,name,manufacturer,model,modelDate,serialNumber,software,description,location,contactPoint,comment,seeAlso
+temgemini:ARM200F,chameo:TransmissionElectronMicroscope,ARM200F,JEOL,,,,,JEOL JEM ARM200F - Double corrected ColdFEG microscope,,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
+temgemini:2100F,chameo:TransmissionElectronMicroscope,2100F,JEOL,,,,,JEOL JEM 2100F - FEG microscope,,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f
+temgemini:2100,chameo:TransmissionElectronMicroscope,2100,JEOL,,,,,JEOL JEM 2100 - LaB6 microscope,,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100
+emlab:TEM_JEOL-JEM-2010,chameo:TransmissionElectronMicroscope,,,,1994,,,,,,,
+emlab:SemA,chameo:ScanningElectronMicroscope,Sem A,JEOL,JSM 840,1989,,,JEOL JSM 840,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoSEM_A.pdf/bd8b7377-2d34-45b7-ae66-c51dfb57b73d
+emlab:SEM_Zeiss-SUPRA-55VP,chameo:ScanningElectronMicroscope,,Zeiss,SUPRA 55VP,2006,SUPRA 55VP-25-49,,,,,,
+emlab:SEM_Hitachi-S-4300SE,chameo:ScanningElectronMicroscope,,Hitachi,S-4300SE,2002,,,,,,,
+emlab:LVSEM,chameo:ScanningElectronMicroscope,LV-SEM,Hitachi,S-3400N,,,,,Sem Sælandsvei,,,https://www.ntnu.edu/documents/140082/1269041159/S-3400NSpecifications.pdf/6b94c26f-a9d4-4f36-82b3-7e9eb3603922
+emlab:SEM_Zeiss-ULTRA-55LE,chameo:ScanningElectronMicroscope,Fe-SEM,Zeiss,ULTRA 55LE,2007,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/Em-lab-ULTRA_Technical.pdf/aad80164-f671-4c14-81c8-3a42c45f9dd8
+emlab:IT800HL,chameo:ScanningElectronMicroscope,SEM,JEOL,IT800HL,JEOL,IT800HL,,,,,,
+emlab:EPMA,temgo:ElectronProbeMicroAnalyser,Fe-SEM,JEOL,JXA-8500F,,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoEPMA.pdf/13290111-9267-44d5-ab3e-20d9b9e13c6e
+emlab:FIB_FEI-200,temgo:FocusedIonBeam,FIB,FEI,200,2008,,,,,,,
+emlab:SIMS,temgo:SecondaryIonMassSpectrometry,SIMS,,,,,"Aphelion 4.3.1 from Amerinex Applied Imaging , Inc. and ADCIS SA",SIMS used by Andreas,,,,
+emlab:LOM,temgo:LightOpticalMicroscope,LOM,Leica,MeF4,,,,LOM used by Andreas ,,,,
+emlab:FishionePlasmaCleaner,temgo:PlasmaCleaner,Fishione Plasma Cleaner,,,,,,,,,,http://www.fischione.com/products/model_1020.asp
+emlab:AgarCoater,temgo:SEMSampleCoater,Agar Turbo Carbon Coater,,,,,,,,,,
+emlab:JeolCrossPolisher,temgo:CrossPolisher,JEOL - IB-19520CCP - Cross Polisher,JEOL,19520CCP,,,,,,,,
+emlab:HitachiIonMiller,temgo:IonMiller,Hitachi IM3000 - Ion Miller,Hitachi,IM3000,,,,,,,,
+elkem:IronFurnance,temgo:Furnance,Furnace,,,,,,Iron furnace,,,,
+elkem:TreatmentLadle,temgo:Ladle,Ladle,,,,,,,,,,
+elkem:InoculationCrucible,temgo:Crucible,Crucible,,,,,,,,,,
+elkem:MouldBars30mm,temgo:Mould,Sand mould,,,,,,,,,,

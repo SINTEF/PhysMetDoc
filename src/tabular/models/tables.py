@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Iterator, List, Optional, Union
+from warnings import deprecated
 
 from .table import Table
 
@@ -27,7 +28,7 @@ class Tables:
         self._tables: List[Table] = []
         if tables:
             for t in tables:
-                self.append_table(t)
+                self.append(t)
 
     # --- Dunder Methods ---
 
@@ -86,6 +87,31 @@ class Tables:
         """
         return iter(self._tables)
 
+    def __len__(self) -> int:
+        """
+        Returns the number of tables.
+
+        Returns:
+            Number of tables.
+        """
+        return len(self._tables)
+
+    def __contains__(self, name: str) -> bool:
+        """
+        Returns whether there is a table named `name`.
+
+        Args:
+            name: Name of table to look for.
+
+        Returns:
+            Whether there exists a table with this name.
+
+        """
+        for table in self._tables:
+            if table.name == name:
+                return True
+        return False
+
     # --- Properties ---
 
     @property
@@ -97,6 +123,16 @@ class Tables:
             List[Table]: A list of all stored Table objects.
         """
         return self._tables
+
+    @property
+    def names(self) -> List[str | None]:
+        """
+        Retrieves table names.
+
+        Returns:
+            List[str]: A list of table names.
+        """
+        return [t.name for t in self._tables]
 
     @property
     def first(self) -> Table:
@@ -120,6 +156,7 @@ class Tables:
         cls,
         path: Union[str, Path],
         format: Optional[str] = None,
+        sheets: Optional[list] = None,
         **kwargs: Any,
     ) -> Tables:
         """
@@ -131,6 +168,8 @@ class Tables:
         Args:
             path (Union[str, Path]): Path to the file or directory.
             format (Optional[str], optional): Format override.
+            sheets (Union[str, int]): Name or number of selected sheets to
+                load.
             **kwargs: Extra parameters passed to the reader.
 
         Returns:
@@ -139,7 +178,7 @@ class Tables:
         # pylint: disable=import-outside-toplevel
         from tabular.io import read
 
-        return read(path, format=format, **kwargs)
+        return read(path, format=format, sheets=sheets, **kwargs)
 
     # --- Instance Methods ---
 
@@ -183,6 +222,7 @@ class Tables:
                 return t
         raise KeyError(f"Table '{name}' not found.")
 
+    @deprecated("Use Tables.append() instead.")
     def append_table(self, table: Table) -> None:
         """
         Appends a Table to the end of the collection.
@@ -191,6 +231,22 @@ class Tables:
             table (Table): The table instance to add.
         """
         self._tables.append(table)
+
+    def append(self, table: Union[Table, Tables]) -> None:
+        """
+        Appends a Table or Tables object to the end of the collection.
+
+        Args:
+            table (Table or Tables): The table(s) instance to add.
+        """
+        if isinstance(table, Table):
+            self._tables.append(table)
+        elif isinstance(table, Tables):
+            self._tables.extend(table.tables)
+        else:
+            raise TypeError(
+                "Tables.append() can only append Table or Tables objects."
+            )
 
     def remove_table(self, key: Union[int, str]) -> None:
         """

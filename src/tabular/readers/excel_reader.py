@@ -2,6 +2,7 @@
 
 import importlib
 import logging
+import warnings
 from pathlib import Path
 from typing import Any, Tuple
 from zipfile import BadZipFile
@@ -77,7 +78,11 @@ class ExcelReader(BaseReader):
         self._validate_path(path)
 
         try:
-            wb = _OPENPYXL.load_workbook(path, data_only=True)
+            with warnings.catch_warnings():
+                warnings.filterwarnings(
+                    "ignore", "DrawingML support is incomplete *"
+                )
+                wb = _OPENPYXL.load_workbook(path, data_only=True)
         except (
             BadZipFile,
             _INVALID_FILE_EXCEPTION,
@@ -95,6 +100,6 @@ class ExcelReader(BaseReader):
             table = self._convert_sheet_to_table(
                 sheet, sheet_name, infer_types
             )
-            tables.append_table(table)
+            tables.append(table)
 
         return tables
