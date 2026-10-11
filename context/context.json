@@ -181,7 +181,7 @@
       "@id": "chameo:hasOperator",
       "@type": "@id"
     },
-    "technique": "@id": "chameo:technique",
+    "technique": "chameo:technique",
     "Sample": {
       "@id": "chameo:Sample",
       "@type": "http://www.w3.org/2002/07/owl#Class"
