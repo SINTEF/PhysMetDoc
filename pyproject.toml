@@ -38,6 +38,7 @@ pre-commit = [
 dev = [
     "physmetdoc[pre-commit]",
     "virtualenvwrapper==6.1.1",
+    "keyring>=25.6.0",
 ]
 
 [project.scripts]

@@ -1,4 +1,7 @@
-@id,@type,name,prefix,namespace,homepage,hasFundingAgency,hasGrantNumber
-proj:PhysMet,foaf:Project,"SFI PhysMet",pm,https://www.ntnu.edu/physmet/kb/,https://www.ntnu.edu/physmet/,org:NFR,309584
-proj:FAST,foaf:Project,FAST,,,https://www.ntnu.edu/fast/,org:NFR,
-proj:MaterialsCommons,foaf:Project,MaterialsCommons,,,https://www.materialscommons.eu/,org:EC,101293545
+@id,@type,name,prefix,namespace,homepage,hasFundingAgency,hasGrantNumber,sameAs
+proj:PhysMet,foaf:Project,SFI PhysMet,pm,https://www.ntnu.edu/physmet/kb/,https://www.ntnu.edu/physmet/,org:NFR,309584,nvaid:2748095
+proj:FAST,foaf:Project,SFI FAST,,,https://www.ntnu.edu/fast/,org:NFR,360119,nvaid:2777253
+proj:MaterialsCommons,foaf:Project,MaterialsCommons,,,https://www.materialscommons.eu/,org:EC,101293545,
+proj:PINK,foaf:Project,PINK,,,https://pink-project.eu/,org:EC,101137809,
+proj:CDIF4EOSC,foaf:Project,CDIF4EOSC,,,https://www.cdif4eosc.eu/,org:EC,101292473,
+proj:NEO4MAT,foaf:Project,NEO4MAT,,,https://www.connect-nm.eu/project-neo4mat/,org:NFR,363164,

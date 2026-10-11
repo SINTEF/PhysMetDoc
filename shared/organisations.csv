@@ -1,5 +1,5 @@
 @id,@type,name,prefix,namespace,sameAs
-org:EC,foaf:Organization,"European Comission",ec,https://commission.europa.eu/,ror:00k4n6c32
+org:EC,foaf:Organization,European Comission,ec,https://commission.europa.eu/,ror:00k4n6c32
 org:NFR,foaf:Organization,Forskningsrådet,nfr,https://www.forskningsradet.no/,ror:00epmv149
 org:SINTEF,foaf:Organization,SINTEF,sintef,https://www.sintef.no/,ror:0422tvz87
 org:NTNU,foaf:Organization,NTNU,ntnu,https://www.ntnu.no/,ror:05xg72x27

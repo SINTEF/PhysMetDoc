@@ -1,13 +1,15 @@
 @id,@type,name,prefix,namespace,email,affiliation,sameAs,sameAs
-pers:AndreasVollBugten,foaf:Person,"Andreas Voll Bugten",avb,https://www.ntnu.edu/physmet/data/avb/,,org:NTNU,orcid:0000-0003-0311-8584,nvaid:978376
-pers:MarisaDiSabatino,foaf:Person,"Marisa Di Sabatino",,,marisa.di.sabatino@ntnu.no,org:NTNU,orcid:0000-0001-9306-414X,
-pers:JesperFriis,foaf:Person,"Jesper Friis",jfr,,jesper.friis@sintef.no,org:SINTEF,orcid:0000-0002-1560-809X,nvaid:40356
-pers:IngaDahlenKonow,foaf:Person,"Inga Dalen Konow",idk,https://www.ntnu.edu/physmet/data/idk/,inga.konow@ntnu.no,org:NTNU,orcid:0009-0005-4977-0908,
-pers:ThyraRolfeng,foaf:Person,"Thyra Rolfeng",,,thyra.rolfseng@ntnu.no,org:NTNU,orcid:0009-0006-5150-4147,
-pers:AliElashery,foaf:Person,"Ali Elashery",,,ali.elashery@ntnu.no,org:NTNU,,
-pers:ArmelPerrotin,foaf:Person,"Armel Perrotin",arp,https://www.ntnu.edu/physmet/data/arp/,armel.perrotin@ntnu.no,org:NTNU,,
-pers:TorHaugland,foaf:Person,"Tor Strømsem Haugland",,,tor.haugland@sintef.no,org:SINTEF,,
-pers:HåkonKorsvold,foaf:Person,"Håkon Longva Korsvold",,,hakon.l.korsvold@ntnu.no,org:NTNU,,
-pers:JanKonkel,foaf:Person,"Jan Konkel",,,jan.konkel@ntnu.no,org:NTNU,,
-pers:JianbinXu,foaf:Person,"Jianbin Xu",,,jianbin.xu@ntnu.no,org:NTNU,,
-pers:TomasManik,foaf:Person,"Tomas Manik",,,tomas.manik@ntnu.no,org:NTNU,,
+pers:AndreasVollBugten,foaf:Person,Andreas Voll Bugten,avb,https://www.ntnu.edu/physmet/data/avb/,,org:NTNU,orcid:0000-0003-0311-8584,nvaid:978376
+pers:MarisaDiSabatino,foaf:Person,Marisa Di Sabatino,,,marisa.di.sabatino@ntnu.no,org:NTNU,orcid:0000-0001-9306-414X,
+pers:JesperFriis,foaf:Person,Jesper Friis,,,jesper.friis@sintef.no,org:SINTEF,orcid:0000-0002-1560-809X,nvaid:40356
+pers:IngaDahlenKonow,foaf:Person,Inga Dalen Konow,idk,https://www.ntnu.edu/physmet/data/idk/,inga.konow@ntnu.no,org:NTNU,orcid:0009-0005-4977-0908,
+pers:ThyraRolfeng,foaf:Person,Thyra Rolfeng,tro,https://www.ntnu.edu/physmet/data/tro/,thyra.rolfseng@ntnu.no,org:NTNU,orcid:0009-0006-5150-4147,
+pers:AliElashery,foaf:Person,Ali Elashery,,,ali.elashery@ntnu.no,org:NTNU,,
+pers:ArmelPerrotin,foaf:Person,Armel Perrotin,arp,https://www.ntnu.edu/physmet/data/arp/,armel.perrotin@ntnu.no,org:NTNU,,
+pers:TorHaugland,foaf:Person,Tor Strømsem Haugland,tsh,https://www.ntnu.edu/physmet/data/tsh/,tor.haugland@sintef.no,org:SINTEF,orcid:0000-0002-9153-9866,
+pers:HakonKorsvold,foaf:Person,Håkon Longva Korsvold,,,hakon.l.korsvold@ntnu.no,org:NTNU,,
+pers:JanKonkel,foaf:Person,Jan Konkel,,,jan.konkel@ntnu.no,org:NTNU,,
+pers:JianbinXu,foaf:Person,Jianbin Xu,,,jianbin.xu@ntnu.no,org:NTNU,,
+pers:TomasManik,foaf:Person,Tomas Manik,,,tomas.manik@ntnu.no,org:NTNU,orcid:0009-0004-9208-4877,
+pers:RandiHolmestad,foaf:Person,Randi Holmestad,,,randi.holmestad@ntnu.no,org:NTNU,,
+pers:SylvainGouttebroze,foaf:Person,Sylvain Gouttebroze,,,Sylvain.Gouttebroze@sintef.no,org:SINTEF,orcid:0000-0002-5702-6274,nvaid:412167

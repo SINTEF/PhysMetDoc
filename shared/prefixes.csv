@@ -1,18 +1,15 @@
-prefix,namespace
-rdf,http://www.w3.org/1999/02/22-rdf-syntax-ns#
-rdfs,http://www.w3.org/2000/01/rdf-schema#
-owl,http://www.w3.org/2002/07/owl#
-dcterms,http://purl.org/dc/terms/
-foaf,http://xmlns.com/foaf/0.1/
-ec,https://commission.europa.eu/
-nfr,https://www.forskningsradet.no/
-sintef,https://www.sintef.no/
-ntnu,https://www.ntnu.no/
-elkem,https://www.elkem.com/
-pm,https://www.ntnu.edu/physmet/kb/
-org,https://www.ntnu.edu/physmet/org/
-pers,https://www.ntnu.edu/physmet/people/
-proj,https://www.ntnu.edu/physmet/project/
-emlab,https://www.ntnu.edu/ima/research/emlab/equipment/
-nanolab,https://www.ntnu.edu/nanolab/equipment/
-temgemini,https://www.ntnu.edu/temgemini/tem/equipment/
+prefix,namespace,description
+emmo,https://w3id.org/emmo#,Elementary Multiperspective Material Ontology (EMMO)
+chameo,https://w3id.org/emmo/domain/characterisation-methodology/chameo#,Characterisation Metodology Ontology (CHAMEO)
+temgo,https://www.ntnu.edu/temgemini/vocab/temgo#,TEM Gemini Ontology (TEMGO)
+sw,https://www.ntnu.edu/physmet/software/,Prefix for PhysMet-related software
+org,https://www.ntnu.edu/physmet/org/,Local prefix for organisations
+pers,https://www.ntnu.edu/physmet/people/,Local prefix for people
+proj,https://www.ntnu.edu/physmet/project/,Local prefix for projects
+orcid,https://orcid.org/,ORCID
+nvaid,https://nva.sikt.no/research-profile/,Prefix for researchers registered in the Norwegian Research Information Repository (NVA)
+ror,https://ror.org/,Research Organization Registry (ROR)
+emlab,https://www.ntnu.edu/ima/research/emlab/equipment/,Prefix for equipment at EMLAB
+nanolab,https://www.ntnu.edu/nanolab/equipment/,Prefix for equipment at Nanolab
+temgemini,https://www.ntnu.edu/temgemini/tem/equipment/,Prefix for equipment at the TEM Gemini Centre
+pfiblab,https://smarth-ntnu.com/,Infrastructure for Materials Research for Transporting Hydrogen (SMART-H)

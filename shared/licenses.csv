@@ -1,11 +1,12 @@
 @id,@type,label,title,comment
-https://creativecommons.org/licenses/by/4.0,LicenseDocument,CC BY-4.0,Attribution 4.0 International,Recommended
-https://creativecommons.org/licenses/by-nc/4.0,LicenseDocument,CC BY-NC-4.0,Attribution-NonCommercial 4.0 International,
-https://creativecommons.org/licenses/by-nc-nd/4.0,LicenseDocument,CC BY-NC-ND-4.0,Attribution-NonCommercial-NoDerivatives 4.0 International,
-https://creativecommons.org/licenses/by-nc-sa/4.0,LicenseDocument,CC BY-NC-SA-4.0,Attribution-NonCommercial-ShareAlike 4.0 International,
-https://creativecommons.org/licenses/by-nd/4.0,LicenseDocument,CC BY-ND-4.0,Attribution-NoDerivatives 4.0 International,
-https://creativecommons.org/licenses/by-sa/4.0,LicenseDocument,CC BY-SA-4.0,Attribution-ShareAlike 4.0 International,
-https://data.norge.no/nlod/2.0,LicenseDocument,NLOD,Norsk lisens for offentlige data,Compatible with CC BY-4.0
-https://opendatacommons.org/licenses/odbl/1-0,LicenseDocument,ODbL,Open Data Commons Open Database License,
-https://eupl.eu/1.2/en/,LicenseDocument,EUPL,ropean Union Public Licence,Explicitly compatible with CC SA-3.0 and by extension also CC SA-4.0
-https://spdx.org,LicenseDocument,UNLICENSED,No specific license granted. All Rights Reserved.,Can be used as a placeholder while waiting for a license to be provided.
+https://creativecommons.org/licenses/by/4.0,dcterms:LicenseDocument,CC-BY-4.0,Attribution 4.0 International,"Recommended. Requirements for reuse: Credit must be given to you, the creator."
+https://creativecommons.org/licenses/by-nc/4.0,dcterms:LicenseDocument,CC-BY-NC-4.0,Attribution-NonCommercial 4.0 International,"Requirements for reuse: Credit must be given to you, the creator; Only noncommercial use of your work is permitted."
+https://creativecommons.org/licenses/by-nc-nd/4.0,dcterms:LicenseDocument,CC-BY-NC-ND-4.0,Attribution-NonCommercial-NoDerivatives 4.0 International,"Requirements for reuse: Credit must be given to you, the creator; Only noncommercial use of your work is permitted; No derivatives or adaptations of your work are permitted."
+https://creativecommons.org/licenses/by-nc-sa/4.0,dcterms:LicenseDocument,CC-BY-NC-SA-4.0,Attribution-NonCommercial-ShareAlike 4.0 International,"Requirements for reuse: Credit must be given to you, the creator; Only noncommercial use of your work is permitted; Adaptations must be shared under the same terms."
+https://creativecommons.org/licenses/by-nd/4.0,dcterms:LicenseDocument,CC-BY-ND-4.0,Attribution-NoDerivatives 4.0 International,"Requirements for reuse: Credit must be given to you, the creator;
+No derivatives or adaptations of your work are permitted."
+https://creativecommons.org/licenses/by-sa/4.0,dcterms:LicenseDocument,CC-BY-SA-4.0,Attribution-ShareAlike 4.0 International,"Requirements for reuse: Credit must be given to you, the creator; Adaptations must be shared under the same terms."
+https://data.norge.no/nlod/2.0,dcterms:LicenseDocument,NLOD,Norsk lisens for offentlige data,Compatible with CC-BY-4.0
+https://opendatacommons.org/licenses/odbl/1-0,dcterms:LicenseDocument,ODbL,Open Data Commons Open Database License,"Recommeneded for databases.  A copyleft data license that allows users to freely share, modify, and use a database while keeping the database and its modifications open to others."
+https://eupl.eu/1.2/en/,dcterms:LicenseDocument,EUPL,ropean Union Public Licence,Explicitly compatible with CC SA-3.0 and by extension also CC SA-4.0
+https://spdx.org,dcterms:LicenseDocument,UNLICENSED,No specific license granted. All Rights Reserved.,Used as a placeholder while waiting for a license to be provided.
