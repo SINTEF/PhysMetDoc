@@ -20,6 +20,8 @@ class CSVWriter(BaseWriter):
         self,
         data: Union[tabular.models.Table, tabular.models.Tables],
         path: Optional[Path] = None,
+        newline: Optional[str] = "",
+        encoding: str = "utf-8",
         **kwargs: Any,
     ) -> Optional[str]:
         """
@@ -31,9 +33,12 @@ class CSVWriter(BaseWriter):
                 The dataset to export.
             path (Optional[Path], optional): Output destination path.
                 If None, returns the CSV string.
+            newline (Optional[str], optional): Controls how universal newlines
+                works. See docstring for open().
+            encoding(Optional[str], optional): Encoding used to encode the
+                output file.
             **kwargs: Standard parameters accepted by the `csv.writer`
-                (e.g., delimiter). Supports custom 'encoding' keyword
-                argument (defaults to utf-8).
+                (e.g., delimiter).
 
         Returns:
             Optional[str]: The CSV string if path is None, else None.
@@ -59,8 +64,6 @@ class CSVWriter(BaseWriter):
             )
         )
 
-        encoding = kwargs.pop("encoding", "utf-8")
-
         if path is None:
             # String memory writing
             with io.StringIO() as f:
@@ -71,7 +74,9 @@ class CSVWriter(BaseWriter):
         else:
             # Physical file writing
             try:
-                with open(path, mode="w", newline="", encoding=encoding) as f:
+                with open(
+                    path, mode="w", newline=newline, encoding=encoding
+                ) as f:
                     writer = csv.writer(f, **kwargs)
                     writer.writerow(table.headers)
                     writer.writerows(table.rows)

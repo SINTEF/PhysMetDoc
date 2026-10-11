@@ -12,7 +12,7 @@ emlab:SEM_Zeiss-ULTRA-55LE,chameo:ScanningElectronMicroscope,SEM Zeiss ULTRA 55L
 emlab:SEM_JEOL-IT800HL,chameo:ScanningElectronMicroscope,SEM JEOL IT800HL,JEOL,IT800HL,,,,,,,,
 emlab:EPMA,temgo:ElectronProbeMicroAnalyser,EPMA,JEOL,JXA-8500F,,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoEPMA.pdf/13290111-9267-44d5-ab3e-20d9b9e13c6e
 emlab:FIB_FEI-200,temgo:FocusedIonBeam,FIB,FEI,200,2008,,,,,,,
-emlab:SIMS,temgo:SecondaryIonMassSpectrometry,SIMS,,,,,"Aphelion 4.3.1 from Amerinex Applied Imaging , Inc. And ADCIS SA",SIMS used by Andreas,,,"In Oslo, decommissioned?",
+emlab:SIMS,temgo:SecondaryIonMassSpectrometry,SIMS,,,,,"Aphelion 4.3.1 from Amerinex Applied Imaging , Inc. and ADCIS SA",SIMS used by Andreas,,,"In Oslo, decommissioned?",
 emlab:LOM_Leica-MeF4,temgo:LightOpticalMicroscope,LOM,Leica,MeF4,,,,LOM used by Andreas,,,,
 emlab:FishionePlasmaCleaner,temgo:PlasmaCleaner,Fishione Plasma Cleaner,,,,,,,,,,http://www.fischione.com/products/model_1020.asp
 emlab:AgarCoater,temgo:SEMSampleCoater,Agar Turbo Carbon Coater,,,,,,,,,,

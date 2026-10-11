@@ -1,15 +1,20 @@
 prefix,namespace,description
-emmo,https://w3id.org/emmo#,Elementary Multiperspective Material Ontology (EMMO)
-chameo,https://w3id.org/emmo/domain/characterisation-methodology/chameo#,Characterisation Metodology Ontology (CHAMEO)
-temgo,https://www.ntnu.edu/temgemini/vocab/temgo#,TEM Gemini Ontology (TEMGO)
-sw,https://www.ntnu.edu/physmet/software/,Prefix for PhysMet-related software
+accr,http://publications.europa.eu/resource/authority/access-right/,Pre-defined levels of access rights by DCAT-AP
+avail,http://publications.europa.eu/resource/authority/planned-availability/,Pre-defined levels of availability by DCAT-AP
+nvaid,https://nva.sikt.no/research-profile/,Prefix for researchers registered in the Norwegian Research Information Repository (NVA)
+orcid,https://orcid.org/,ORCID
+ror,https://ror.org/,Research Organization Registry (ROR)
+,,
 org,https://www.ntnu.edu/physmet/org/,Local prefix for organisations
 pers,https://www.ntnu.edu/physmet/people/,Local prefix for people
 proj,https://www.ntnu.edu/physmet/project/,Local prefix for projects
-orcid,https://orcid.org/,ORCID
-nvaid,https://nva.sikt.no/research-profile/,Prefix for researchers registered in the Norwegian Research Information Repository (NVA)
-ror,https://ror.org/,Research Organization Registry (ROR)
+sw,https://www.ntnu.edu/physmet/software/,Prefix for PhysMet-related software
+,,
 emlab,https://www.ntnu.edu/ima/research/emlab/equipment/,Prefix for equipment at EMLAB
 nanolab,https://www.ntnu.edu/nanolab/equipment/,Prefix for equipment at Nanolab
-temgemini,https://www.ntnu.edu/temgemini/tem/equipment/,Prefix for equipment at the TEM Gemini Centre
 pfiblab,https://smarth-ntnu.com/,Infrastructure for Materials Research for Transporting Hydrogen (SMART-H)
+temgemini,https://www.ntnu.edu/temgemini/tem/equipment/,Prefix for equipment at the TEM Gemini Centre
+,,
+emmo,https://w3id.org/emmo#,Elementary Multiperspective Material Ontology (EMMO)
+chameo,https://w3id.org/emmo/domain/characterisation-methodology/chameo#,Characterisation Metodology Ontology (CHAMEO)
+temgo,https://www.ntnu.edu/temgemini/vocab/temgo#,TEM Gemini Ontology (TEMGO)

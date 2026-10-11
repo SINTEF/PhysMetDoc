@@ -52,4 +52,4 @@ else:
 
 tables = Tables.read(xlsxfile)
 for table in tables.tables:
-    table.write(thisdir / f"{table.name}.csv")
+    table.write(thisdir / f"{table.name}.csv", newline="\n")
