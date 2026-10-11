@@ -90,6 +90,7 @@
       "@id": "dcterms:spatial",
       "@type": "@id"
     },
+
     "processedFrom": {
       "@id": "emmo:EMMO_7821eeb8_5e44_452b_90e9_3db03bbef241",
       "@type": "@id"
@@ -122,15 +123,27 @@
       "@id": "emmo:EMMO_cd24eb82_a11c_4a31_96ea_32f870c5580a",
       "@type": "@id"
     },
-    "hasOperator": {
-      "@id": "chameo:hasOperator",
+    "dataValue": "emmo:EMMO_b6292331_94af_4f00_976b_ea55960c2f1c",
+    "hasComposition": {
+      "@id": "emmo:EMMO_bb260eeb_601e_47c3_b896_f99e6b0e4aee",
       "@type": "@id"
     },
-    "hasTechnique": {
-      "@id": "chameo:hasTechnique",
+    "hasMeasurementUnit": {
+      "@id": "emmo:EMMO_bed1d005_b04e_4a90_94cf_02bc678a8569",
       "@type": "@id"
     },
-
+    "hasQuantityPart": {
+      "@id": "emmo:EMMO_95d706e4_8b16_48a1_8dfd_40ccd4df1c12",
+      "@type": "@id"
+    },
+    "hasSpeciesPart": {
+      "@id": "emmo:EMMO_18fdd2cd_4b0a_43a5_a938_66d8290a066c",
+      "@type": "@id"
+    },
+    "hasSingleComponentComposition": {
+      "@id": "emmo:EMMO_889fbe10_70ca_41f3_b701_9853b845c8be",
+      "@type": "@id"
+    },
     "conceptualisation": {
       "@id": "emmo:conceptualisation",
       "@language": "en"
@@ -155,7 +168,6 @@
       "@id": "emmo:EMMO_2bb50428_568d_46e8_b8bf_59a4c5656461",
       "@type": "@id"
     },
-
     "Dataset": {
       "@id": "emmo:EMMO_194e367c_9783_4bf5_96d0_9ad597d48d9a",
       "@type": "http://www.w3.org/2002/07/owl#Class"
@@ -164,6 +176,12 @@
       "@id": "emmo:EMMO_463bcfda_867b_41d9_a967_211d4d437cfb",
       "@type": "http://www.w3.org/2002/07/owl#Class"
     },
+
+    "hasOperator": {
+      "@id": "chameo:hasOperator",
+      "@type": "@id"
+    },
+    "technique": "chameo:technique",
     "Sample": {
       "@id": "chameo:Sample",
       "@type": "http://www.w3.org/2002/07/owl#Class"
@@ -398,6 +416,7 @@
       "@id": "oteio:hasDatamodelStorage",
       "@type": "xsd:anyURI"
     },
+
     "mappings": {
       "@id": "oteio:mapping",
       "@type": "@json"

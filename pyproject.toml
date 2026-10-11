@@ -13,8 +13,8 @@ requires-python = ">=3.12"
 dependencies = [
     "PyYAML>=6.0.3",
     "parse>=1.22.1",
-    "tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@master",
     "wcmatch>=11.0.1",
+    "tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@master",
     "jsonschema>=4.26.0",
     "requests>=2.34.2",
 ]
@@ -45,6 +45,7 @@ treeweaver = "treeweaver.treeweaver:main"
 treeweaver2 = "treeweaver.treeweaver2:main"
 oold-converter = "oold_converter.oold_converter:main"
 extract-prefixes = "extract_prefixes:main"
+compositions = "compositions.compositions:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -57,6 +58,7 @@ line-length = 79
 [tool.hatch.build.targets.wheel]
 packages = [
     "src/extract_prefixes.py",
+    "src/compositions",
     "src/oold_converter",
     "src/tabular",
     "src/treeweaver",

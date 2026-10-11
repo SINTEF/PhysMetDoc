@@ -28,12 +28,16 @@ class PrefixMismatchError(ValueError):
 
 
 def parse(filename: Path, **spec) -> dict:
-    """Parse a CSV file and return a dict with all prefixes defined in it.
+    """Parse a CSV file and return a dict with extracted prefixes.
 
     Args:
         filename: File to parse.
-        spec: Dict with keyword arguments to csv.reader() for specifying
-            how `filename` is formatted.
+        spec: Keyword arguments to csv.reader() for specifying how `filename`
+            is formatted.
+
+    Returns:
+        Dict with all prefixes extracted from `filename`.
+
     """
     prefixes: dict = {}
     conf = spec if spec else {}

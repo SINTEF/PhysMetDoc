@@ -99,6 +99,7 @@ repos:
         entry: pylint
         args:
           - --rcfile=pyproject.toml
+          - --disable=fixme
           - --max-line-length=79
         language: python
         types: [python]
@@ -110,9 +111,9 @@ repos:
         name: pylint - tests
         entry: pylint
         args:
-          - "--rcfile=pyproject.toml"
-          - "--disable=import-outside-toplevel,redefined-outer-name"
-          - "--max-line-length=79"
+          - --rcfile=pyproject.toml
+          - --disable=import-outside-toplevel,redefined-outer-name,fixme
+          - --max-line-length=79
         language: python
         types: [python]
         require_serial: true
