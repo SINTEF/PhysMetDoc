@@ -467,7 +467,7 @@ class Treeweaver:
         source: PathType,
         output: PathType,
         informat: Optional[str] = None,
-        sheet: Union[str, int] = 1,
+        sheet: Union[str, int] = 0,
         mappings: Optional[dict] = None,
         reader_param: Optional[dict] = None,
         outformat: Optional[str] = None,

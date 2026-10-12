@@ -132,7 +132,7 @@ def write(
         Optional[str]: Serialized string if path is None, else None.
     """
     if sheet:
-        data = data[sheet]
+        data = data[sheet]  # type: ignore[assignment]
 
     out_path = Path(path) if path is not None else None
 
