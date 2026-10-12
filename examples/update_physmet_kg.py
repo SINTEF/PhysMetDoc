@@ -78,11 +78,13 @@ for table in shared_tables.tables:
 # Get context
 context = get_context(rootdir / "context" / "context.json", default_theme=None)
 context.add_prefixes(extracted_prefixes)
+context.add_prefixes({"emmo": EMMO})
 
 
 # Create triplestore
 ts = Triplestore("rdflib")
-ts.bind("emmo", EMMO)
+ts.namespaces["emmo"] = EMMO
+
 
 # Populate with shared resources
 for table in shared_tables.tables:
