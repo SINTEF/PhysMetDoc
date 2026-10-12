@@ -2,7 +2,6 @@
 
 # pylint: disable=invalid-name
 
-import sys
 from pathlib import Path
 
 import keyring
@@ -13,8 +12,6 @@ from tripper.datadoc import TableDoc, get_context
 from extract_prefixes import parse
 from tabular import Tables
 from treeweaver import Treeweaver
-
-PathType = str | Path
 
 rootdir = Path(__file__).resolve().parent.parent
 examplesdir = rootdir / "examples"
@@ -29,8 +26,9 @@ tmpdir.mkdir(parents=True, exist_ok=True)
 
 # Set up your active session cookies. To find these:
 #   - Open DevTools (F12) -> Application/Storage -> Cookies -> SharePoint site
-#   - Store them in your keyring, with `service_name="physmet-shared_resources"`
-#     and `username` "FedAuth" and "rtFa", respectively
+#   - Store the values of FedAuth and rtFa in your keyring.
+#     Use service_name="physmet-shared_resources" and `username` "FedAuth"
+#     and "rtFa", respectively.
 cookies = {
     "FedAuth": keyring.get_password("physmet-shared_resources", "FedAuth"),
     "rtFa": keyring.get_password("physmet-shared_resources", "rtFa"),
@@ -96,15 +94,15 @@ for table in shared_tables.tables:
 sharepoint_tables = Tables.read(ListSharePoint)
 for yamlfile in examplesdir.glob("*.yaml"):
     print("*** Processing yaml file:", yamlfile.name)
-    outfile = tmpdir / f"{yamlfile.stem}.xlsx"
+    output = tmpdir / f"{yamlfile.stem}.xlsx"
     tw = Treeweaver(yamlfile)
     # This would have been more efficient
-    # tw.savedoc(source=sharepoint_tables, output=outfile, sheet=yamlfile.stem)
-    tw.savedoc(source=ListSharePoint, output=outfile)
+    # tw.savedoc(source=sharepoint_tables, output=output, sheet=yamlfile.stem)
+    tw.savedoc(source=ListSharePoint, output=output)
 
-    tables = Tables.read(outfile)
+    tables = Tables.read(output)
     for sheet in tables.names:
-        td = TableDoc.parse_excel(outfile, sheet=sheet, context=context)
+        td = TableDoc.parse_excel(output, sheet=sheet, context=context)
         td.save(ts)
 
 
