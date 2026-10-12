@@ -110,6 +110,7 @@ def write(
     data: Union[Table, Tables],
     path: Optional[Union[str, Path]] = None,
     format: Optional[str] = None,
+    sheet: Optional[str | int] = None,
     **kwargs: Any,
 ) -> Optional[str]:
     """
@@ -124,11 +125,15 @@ def write(
         path (Optional[Union[str, Path]]): Destination path.
             If None, returns string.
         format (Optional[str]): Format identifier (e.g., 'csv', 'json').
+        sheet (Optional[str | int]): Sheet name or number to write.
         **kwargs: Additional parameters passed to writer.
 
     Returns:
         Optional[str]: Serialized string if path is None, else None.
     """
+    if sheet:
+        data = data[sheet]
+
     out_path = Path(path) if path is not None else None
 
     if out_path is None and format is None:

@@ -253,8 +253,9 @@ class Pattern:
             self.assign_computed_variables(path, e)
             self.assign_mappings(path, e)
             self.assign_from_call(path, e)
-
-            e.update({k: substitute(v, e) for k, v in self.vars.items() if v})
+            for k, v in self.vars.items():
+                if v:
+                    e[k] = substitute(v, e)
             for name, template in self.templates.items():
                 docs[name] = template.substitute(e)
         return docs
@@ -391,9 +392,11 @@ class Treeweaver:
                 self.env["ctime"] = val
 
             dirpath = Path(getval(row, "Path"))
-            filepath = dirpath / getval(row, "File Name")
+            filepath = Path(
+                str(dirpath / getval(row, "File Name")).replace(" ", "%20")
+            )
             relpath = (
-                filepath.relative_to(self.env["baseURL"])
+                filepath.relative_to(self.env["baseURL"].replace(" ", "%20"))
                 if "baseURL" in self.env
                 else filepath
             )
@@ -471,11 +474,13 @@ class Treeweaver:
         mode: str = "update",
         **kwargs,
     ) -> None:
-        """Like savedoc(), but gets the paths to document from a table
-        instead from a directory tree.
+        """Document `source` and save it to table(s) that can be serialised
+        to RDF with Tripper.
 
         Arguments:
-            source: File name of table with paths to document.
+            source: If directory, it is the root directory to document.
+                Otherwise, `source` should be a table with file paths to
+                document.
             output: Output path. Format is inferred from the file extension
                 unless explicitly provided via `format`.
             informat: Format of ` filename` to read.
@@ -530,7 +535,7 @@ class Treeweaver:
             tables = self.totables(docs, oldtables=oldtables)
         else:
             tables = self.totables(docs)
-        tables.write(p, format=outformat, **kwargs)
+        tables.write(p, format=outformat, sheet=sheet, **kwargs)
 
 
 def globcompile(pattern):
