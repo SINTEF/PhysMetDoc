@@ -30,9 +30,16 @@ url = (
 #   Open DevTools (F12) -> Application/Storage -> Cookies -> SharePoint site
 # Store them in your keyring, with `service_name="physmet-shared_resources"`
 # and `username` "FedAuth" and "rtFa", respectively
+FedAuth = keyring.get_password("physmet-shared_resources", "FedAuth")
+rtFa = keyring.get_password("physmet-shared_resources", "rtFa")
+if not FedAuth or not rtFa:
+    raise PermissionError(
+        "Missing 'FedAuth' and 'rtFa' users in your keyring for service "
+        "'physmet-shared_resources'. Please add them."
+    )
 cookies = {
-    "FedAuth": keyring.get_password("physmet-shared_resources", "FedAuth"),
-    "rtFa": keyring.get_password("physmet-shared_resources", "rtFa"),
+    "FedAuth": FedAuth,
+    "rtFa": rtFa,
 }
 
 headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"}

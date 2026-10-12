@@ -3,16 +3,30 @@ PhysMet Data Documentation Templates
 The objective of this repository is to share templates and recommended
 folder structures to store data in the frame of the SFI PhysMet.
 
+
+Documenting characterisation and modelling results
+--------------------------------------------------
+
+### Characterisation results
+Characterisation results are represented according to the figure below:
+
+![Measurement](figs/measurement.png)
+> **Figure**. Representing characterisation data.
+
+
+
+
+
 Templates and shared resources
 ------------------------------
 The [templates/](templates/) folder contain a set of CSV templates for documentation of scientific data.
 To increase the richness and FAIRness or the metadata, the documented data should be related to other shared resources.
 These shared resources can be found in the CSV files in the [shared/](shared/) folder.
 
-Figure 1. below shows how the templates and shared resources are related to each other.
+The figure below shows how the templates and shared resources are related to each other.
 
 ![Tables](figs/tables.svg)
-> Figure 1. Overview of template tables and how they relate to each other.
+> **Figure**. Overview of template tables and how they relate to each other.
 >
 > The colour coding is as follows; red: shared resources reused between
 > projects, blue: tables created by the individual data producer (not

@@ -18,7 +18,7 @@ examplesdir = rootdir / "examples"
 tmpdir = examplesdir / "tmp"
 shared_resources = rootdir / "shared" / "shared_resources.xlsx"
 ListSharePoint = tmpdir / "ListSharePoint.xlsx"
-kg = tmpdir / "kg.ttl"
+kg = rootdir.parent / "PhysMetKnowledgeGraph/" / "kg.ttl"
 
 
 tmpdir.mkdir(parents=True, exist_ok=True)
@@ -97,8 +97,8 @@ for yamlfile in examplesdir.glob("*.yaml"):
     output = tmpdir / f"{yamlfile.stem}.xlsx"
     tw = Treeweaver(yamlfile)
     # This would have been more efficient
-    # tw.savedoc(source=sharepoint_tables, output=output, sheet=yamlfile.stem)
-    tw.savedoc(source=ListSharePoint, output=output)
+    tw.savedoc(source=ListSharePoint, output=output, sheet=yamlfile.stem)
+    # tw.savedoc(source=ListSharePoint, output=output)
 
     tables = Tables.read(output)
     for sheet in tables.names:

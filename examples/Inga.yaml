@@ -14,8 +14,6 @@ environment:
   operator: "pers:IngaKonow"         # Operator of an instrument
 
   # URL to the root folder of your data
-  #baseURL: "https://studntnu-my.sharepoint.com/:f:/g/personal/ingako_ntnu_no/IgArJFb9vA__T5f8XyVlt2vSAS8D02bGPIWqZDF7fq9Nd6c?e=zNR5Vy"
-
   baseURL: "https://studntnu.sharepoint.com/sites/o365_SFIPhysMet/Shared%20Documents/Reseach%20Areas,%20RA%20(Open%20channel)/RA%201%20Multi-scale%20material%20analyses/Datasets%20Inga%20Konow"
 
 
@@ -35,7 +33,7 @@ environment:
 patterns:
 - "TEM/{alloy}/{treatment}/{instrument}/{session}/{data}":
     mappings:
-      instrument:
+      "instrumentId:instrument":
         "ARM": "temgemini:ARM200F"
         "2100": "temgemini:2100"
         "2100F": "temgemini:2100F"
@@ -44,8 +42,11 @@ patterns:
       sampleId: "sample-{treatment}"
       datasetId: "data-{instrument}-{session}-{treatment}-{data}"
       measurementId: "{instrument}-{session}-{treatment}-{data}"
-      equipmentId: "{instrument}"
+      equipmentId: "{instrumentId}"
       processedFrom: "{prefix}:{sampleId}"
+      sessionDataId: "data-{instrument}-{session}-{treatment}"
+      sessionId: "{instrument}-{session}-{treatment}"
+      isDatumOf: "{prefix}:{sessionDataId}"
 
 - "SEM/{alloy}/{method}/{treatment}/{data}":
     vars:
@@ -54,6 +55,9 @@ patterns:
       measurementId: "{method}-{treatment}-{data}"
       equipmentId: "pfiblab:Helios_G5"
       processedFrom: "{prefix}:{treatment}"
+      sessionDataId: "data-{method}-{treatment}"
+      sessionId: "{method}-{treatment}"
+      isDatumOf: "{prefix}:{sessionDataId}"
 
 
 
@@ -101,8 +105,7 @@ templates:
     priorVersion: ""
     processedFrom: "{processedFrom}"
     isDatumOf: "{isDatumOf}"
-    distribution.downloadURL: "{downloadURL}"
-    distribution.accessURL: "{baseURL}/{escapedpath}"
+    distribution.downloadURL: "{escapedurl}"
 
   measurement:
     "@id": "avb:{measurementId}"
@@ -114,4 +117,35 @@ templates:
     hasOutput: "{prefix}:{datasetId}"
     hasOperator: "{operator}"
     hasParticipant: "{equipmentId}"
-    #hasTechnique: "{technique}"
+    #technique: "{technique}"
+
+  session:
+    "@id": "avb:{sessionId}"
+    "@type": "emmo:Measurement"
+    title: "{sessionId}"
+    description: ""
+    comment: ""
+    hasInput: "{prefix}:{sampleId}"
+    hasOutput: "{prefix}:{sessionDataId}"
+    hasOperator: "{operator}"
+    hasParticipant: "{equipmentId}"
+    #technique: "{technique}"
+
+  sessionData:
+    "@id": "{prefix}:{sessionDataId}"
+    "@type": "emmo:Dataset"
+    title: "{sessionDataId}"
+    description: ""
+    comment: ""
+    keyword: ""
+    rightsHolder: "{rightsHolder}"
+    license: "{license}"
+    wasGeneratedBy: "{project}"
+    contactPoint: "{contactPoint}"
+    creator: "{creator}"
+    seeAlso: ""
+    #releaseDate: "{ctime}"
+    version: ""
+    priorVersion: ""
+    processedFrom: "{processedFrom}"
+    distribution.accessURL: "{escapedurl}"

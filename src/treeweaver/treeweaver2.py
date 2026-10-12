@@ -180,6 +180,11 @@ class Pattern:
             path: Directory or file path to document.
             env: Environment to update.
         """
+        if str(path).startswith("/") or not "baseURL" in env:
+            url = str(path)
+        else:
+            url = env["baseURL"].rstrip("/") + "/" + str(path).lstrip("/")
+
         root = Path(env.get("rootdir", "."))
         p = root / path
         if p.exists():
@@ -187,8 +192,11 @@ class Pattern:
             mtime = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
         else:
             ctime = mtime = ""
+        env.setdefault("path", str(path))
         env.setdefault("fullpath", str(p))
+        env.setdefault("url", url)
         env.setdefault("escapedpath", str(p).replace(" ", "%20"))
+        env.setdefault("escapedurl", url.replace(" ", "%20"))
         env.setdefault("filename", p.name)
         env.setdefault("dirname", str(p.parent))
         env.setdefault("ctime", ctime)
@@ -331,6 +339,7 @@ class Treeweaver:
                 raise UnassignedVariableError(msg)
             for k, v in d.items():
                 docs[k].append(v)
+
         return dict(docs)
 
     def document_pathtable(
@@ -535,7 +544,7 @@ class Treeweaver:
             tables = self.totables(docs, oldtables=oldtables)
         else:
             tables = self.totables(docs)
-        tables.write(p, format=outformat, sheet=sheet, **kwargs)
+        tables.write(p, format=outformat, **kwargs)
 
 
 def globcompile(pattern):
