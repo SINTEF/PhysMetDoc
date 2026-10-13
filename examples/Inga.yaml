@@ -8,10 +8,10 @@ environment:
   rightsHolder: "org:NTNU"
   license: "https://spdx.org"  # XXX - define a license (this means All Rights Reserved)
 
-  project: "proj:PhysMet"                # Project that created a sample or dataset
+  project: "proj:PhysMet"              # Project that created a sample or dataset
   contactPoint: "pers:RandiHolmestad"  # Project leader or Supervisor
-  creator: "pers:IngaKonow"          # Creator of sample or dataset
-  operator: "pers:IngaKonow"         # Operator of an instrument
+  creator: "pers:IngaKonow"            # Creator of sample or dataset
+  operator: "pers:IngaKonow"           # Operator of an instrument
 
   # URL to the root folder of your data
   baseURL: "https://studntnu.sharepoint.com/sites/o365_SFIPhysMet/Shared%20Documents/Reseach%20Areas,%20RA%20(Open%20channel)/RA%201%20Multi-scale%20material%20analyses/Datasets%20Inga%20Konow"
@@ -108,7 +108,7 @@ templates:
     distribution.downloadURL: "{escapedurl}"
 
   measurement:
-    "@id": "avb:{measurementId}"
+    "@id": "{prefix}:{measurementId}"
     "@type": "emmo:Measurement"
     title: "{measurementId}"
     description: ""
@@ -117,10 +117,11 @@ templates:
     hasOutput: "{prefix}:{datasetId}"
     hasOperator: "{operator}"
     hasParticipant: "{equipmentId}"
+    isTemporalPartOf: "{prefix}:{sessionId}"
     #technique: "{technique}"
 
   session:
-    "@id": "avb:{sessionId}"
+    "@id": "{prefix}:{sessionId}"
     "@type": "emmo:Measurement"
     title: "{sessionId}"
     description: ""
@@ -129,7 +130,6 @@ templates:
     hasOutput: "{prefix}:{sessionDataId}"
     hasOperator: "{operator}"
     hasParticipant: "{equipmentId}"
-    #technique: "{technique}"
 
   sessionData:
     "@id": "{prefix}:{sessionDataId}"
