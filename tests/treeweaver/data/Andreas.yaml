@@ -10,8 +10,8 @@ environment:
 
   project: "proj:PhysMet"                  # Project that created a sample or dataset
   contactPoint: "pers:MarisaDiSabatino"    # Project leader or Supervisor
-  creator: "pers:AnderasVollBugten"        # Creator of sample or dataset
-  operator: "pers:AnderasVollBugten"       # Operator of an instrument
+  creator: "pers:AndreasVollBugten"        # Creator of sample or dataset
+  operator: "pers:AndreasVollBugten"       # Operator of an instrument
 
   # URL to the root folder of your data
   baseURL: "https://studntnu.sharepoint.com/:i:/r/sites/o365_SFIPhysMet/Shared%20Documents/Reseach%20Areas,%20RA%20(Open%20channel)/RA%203%20Sustainable%20and%20high-performance%20material%20development/Andreas%20Voll%20Bugten%20data"

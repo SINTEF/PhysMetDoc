@@ -191,6 +191,12 @@ patterns:
         "data:dataset":
           "sem260925": "pm:SEM"
           "{x}": "pm:{x}"
+      regexp:
+        # List of regular expression for variable assignments
+        - pattern: "(.*)\s*"               # regular expression
+          string: "{session}"              # string to match against
+          matchvars: ["stripped_session"]  # variables assigned from parenthesis matching
+
       call:
         # List of user-defined functions to call in the given order.
         # These functions extracts documentation from the file system and returns a dict with

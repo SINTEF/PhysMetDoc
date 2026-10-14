@@ -121,10 +121,14 @@ class Pattern:
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, pattern: str, templates: dict, spec: dict) -> None:
+        # pylint: disable=too-many-locals
+
         s = spec.copy()
         # Pre-process pattern
         self.patt = pattern  # un-processed
-        processed = re.sub(r"\{([^:}]*)\}", r"{\1:component}", pattern)
+        processed = re.sub(
+            r"\{([^:}]*)\}", r"{\1:component}", pattern
+        ).replace(" ", "%20")
         self.pattern = parse.compile(processed, extra_types=parse_formatters)
 
         # pylint: disable=invalid-name
@@ -141,6 +145,25 @@ class Pattern:
             self.mappings[(newvar, var)] = {
                 parse.compile(k): v for k, v in maps.items()
             }
+
+        self.regexps = []
+        for redef in s.pop("regexp", ()):
+            flags = int(redef.get("flags", 0))
+            regexp = re.compile(redef["pattern"], flags=flags)
+            if len(redef["matchvars"]) != regexp.groups:
+                raise ValueError(
+                    f"Number of 'matchvars' in regexp {redef['pattern']} in "
+                    f"pattern '{pattern}' must match the number of groups "
+                    f"in the regexp. Expected {regexp.groups}, but got "
+                    f"{len(redef['matchvars'])} matchvars."
+                )
+            self.regexps.append(
+                {
+                    "pattern": regexp,
+                    "string": redef["string"],
+                    "matchvars": redef["matchvars"],
+                }
+            )
 
         self.callspecs = []
         for callfunc in s.pop("call", []):
@@ -227,6 +250,14 @@ class Pattern:
                     f"Path: '{path}'"
                 )
 
+    def assign_regexp(self, path: PathType, env: dict):
+        """Update `env` from regular expression matching."""
+        # pylint: disable=unused-argument
+        for redef in self.regexps:
+            m = redef["pattern"].match(redef["string"].format(**env))
+            for k, v in zip(redef["matchvars"], m.groups()):
+                env[k] = v
+
     def assign_from_call(self, path: PathType, env: dict):
         """Update `env` from calling functions described in the call
         field in the configuration of a pattern.
@@ -254,12 +285,14 @@ class Pattern:
         docs: dict = {}
         if not self.match(path):
             return docs
+
         if r := self.pattern.parse(str(path)):
             e = env.copy()
             e.update(r.named)
 
             self.assign_computed_variables(path, e)
             self.assign_mappings(path, e)
+            self.assign_regexp(path, e)
             self.assign_from_call(path, e)
             for k, v in self.vars.items():
                 if v:

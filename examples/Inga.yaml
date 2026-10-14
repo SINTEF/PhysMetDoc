@@ -31,28 +31,34 @@ environment:
 # Patterns matching
 # Variables will assigned
 patterns:
-- "TEM/{alloy}/{treatment}/{instrument}/{session}/{data}":
+- "TEM/{alloy}/{treatment}/{instrument}/{session}/{stem}.{format}":
     mappings:
       "instrumentId:instrument":
-        "ARM": "temgemini:ARM200F"
-        "2100": "temgemini:2100"
-        "2100F": "temgemini:2100F"
-        "GARM": "temgemini:GARM300F2"
+        "ARM": "nortem:ARM200F"
+        "2100": "nortem:JEM2100"
+        "2100F": "nortem:JEM2100F"
+        "GARM": "nortem:GARM300F2"
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
     vars:
       sampleId: "sample-{treatment}"
-      datasetId: "data-{instrument}-{session}-{treatment}-{data}"
-      measurementId: "{instrument}-{session}-{treatment}-{data}"
+      datasetId: "data-{instrument}-{session}-{treatment}-{stem}"
+      measurementId: "{instrument}-{session}-{treatment}-{stem}"
       equipmentId: "{instrumentId}"
       processedFrom: "{prefix}:{sampleId}"
       sessionDataId: "data-{instrument}-{session}-{treatment}"
       sessionId: "{instrument}-{session}-{treatment}"
       isDatumOf: "{prefix}:{sessionDataId}"
 
-- "SEM/{alloy}/{method}/{treatment}/{data}":
+- "SEM/{alloy}/{method}/{treatment}/{stem}.{format}":
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
     vars:
       sampleId: "sample-{treatment}"
-      datasetId: "data-{method}-{treatment}-{data}"
-      measurementId: "{method}-{treatment}-{data}"
+      datasetId: "data-{method}-{treatment}-{stem}"
+      measurementId: "{method}-{treatment}-{stem}"
       equipmentId: "pfiblab:Helios_G5"
       processedFrom: "{prefix}:{treatment}"
       sessionDataId: "data-{method}-{treatment}"
@@ -105,6 +111,8 @@ templates:
     priorVersion: ""
     processedFrom: "{processedFrom}"
     isDatumOf: "{isDatumOf}"
+    distribution.format: "{format}"
+    distribution.mediaType: "{mediaType}"
     distribution.downloadURL: "{escapedurl}"
 
   measurement:

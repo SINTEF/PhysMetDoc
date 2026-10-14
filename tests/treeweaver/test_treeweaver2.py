@@ -83,6 +83,24 @@ def test_pattern_match():
     assert not pattern.match("images/img.tif")
 
 
+def test_pattern_regexp():
+    """Test pattern regexp."""
+    redef = {
+        "pattern": "([^-]+)-(.*)",
+        "string": "{data}",
+        "matchvars": ["technique", "date"],
+    }
+    spec = {"regexp": [redef]}
+    pattern = Pattern("{data}", {}, spec)
+    env = {"data": "SEM-261014"}
+    pattern.assign_regexp("", env=env)
+    assert env == {
+        "data": "SEM-261014",
+        "technique": "SEM",
+        "date": "261014",
+    }
+
+
 def test_pattern_call():
     """Test pattern.call() method."""
     env = {}
@@ -387,6 +405,7 @@ def test_treeweaver_savedoc_andreas2():
         tw.savedoc(
             source=source,
             output=outdir / "Andreas2.xlsx",
+            sheet="Query4",
         )
 
 
