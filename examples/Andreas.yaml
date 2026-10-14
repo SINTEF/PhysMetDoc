@@ -1,0 +1,259 @@
+# Treeweaver version
+version: "2.0"
+
+# Default variable
+environment:
+  prefix: "avb"
+
+  rightsHolder: "org:NTNU"
+  accessRights: "avail:RESTRICTED"  # XXX - define the access rights
+  license: "https://spdx.org"       # XXX - define a license (this means All Rights Reserved)
+  availability: "avail:STABLE"      # Planned availability
+
+  project: "proj:PhysMet"                # Project that created a sample or dataset
+  contactPoint: "pers:MarisaDiSabatino"  # Project leader or Supervisor
+  creator: "pers:AnderasVollBugten"      # Creator of sample or dataset
+  operator: "pers:AnderasVollBugten"     # Operator of an instrument
+
+  # URL to the root folder of your data
+  baseURL: "https://studntnu.sharepoint.com/sites/o365_SFIPhysMet/Shared%20Documents/Reseach%20Areas,%20RA%20(Open%20channel)/RA%203%20Sustainable%20and%20high-performance%20material%20development/Andreas%20Voll%20Bugten%20data"
+
+
+  # Empty defaults - will be ignored if not set by a pattern
+  hasComposition: ""
+  isDatumOf: ""
+  processedFrom: ""
+  location: ""
+  isTemporalPartOf: ""
+  isSpatioTemporalPartOf: ""
+  downloadURL: ""
+  technique: ""
+  sessionDataId: ""
+  sessionId: ""
+
+
+# Patterns matching
+# Variables will assigned
+patterns:
+- "{sample}/{instrument}/{technique}/{experiment}/{session}/{file}.{format}":
+    match: "????/*/{EDS,Imaging,EPMA,SIMS,Synchrotron,EBSD}/*/*/*"
+    exclude:
+      - "*.ini"
+    mappings:
+      "instrumentId:instrument":
+        "SEM": "emlab:SEM_JEOL-IT800HL"
+        "SIMS": "norfab:SIMS"
+        "LOM": "emlab:LOM_Leica-MeF4"
+        "EPMA": "emlab:EPMA"
+        "Synchrotron": ""  # XXX
+      "techniqueId:technique":
+        EDS: "chameo:EnergyDispersiveXraySpectroscopy"
+        Imaging: "chameo:ScanningElectronMicroscopy"
+        EPMA: "chameo:ElectronProbeMicroanalysis"
+        SIMS: "chameo:SecondaryIonMassSpectrometry"
+        Synchrotron: "chameo:SynchrotronXRayDiffraction"
+        EBSD: "chameo:ElectronBackscatterDiffraction"
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
+    vars:
+      sampleId: "{sample}"
+      datasetId: "data-{sample}-{technique}-{experiment}-{session}-{file}"
+      measurementId: "{sample}-{technique}-{experiment}-{session}-{file}"
+      equipmentId: "{instrumentId}"
+      processedFrom: "{prefix}:{sampleId}"
+      sessionDataId: "data-{sample}-{technique}-{experiment}-{session}"
+      sessionId: "{sample}-{technique}-{experiment}-{session}"
+      isDatumOf: "{prefix}:{sessionDataId}"
+
+- "{sample}/{instrument}/{session}/{step}/{file}.{format}":
+    match: "????/{EDS,Imaging,EPMA,SIMS,Synchrotron,EBSD}/*/*/*"
+    exclude:
+      - "*.ini"
+    mappings:
+      "instrumentId:instrument":
+        "SEM": "emlab:SEM_JEOL-IT800HL"
+        "SIMS": "norfab:SIMS"
+        "LOM": "emlab:LOM_Leica-MeF4"
+        "EPMA": "emlab:EPMA"
+        "Synchrotron": ""  # XXX
+      "techniqueId:instrument":
+        EDS: "chameo:EnergyDispersiveXraySpectroscopy"
+        Imaging: "chameo:ScanningElectronMicroscopy"
+        EPMA: "chameo:ElectronProbeMicroanalysis"
+        SIMS: "chameo:SecondaryIonMassSpectrometry"
+        Synchrotron: "chameo:SynchrotronXRayDiffraction"
+        EBSD: "chameo:ElectronBackscatterDiffraction"
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
+    vars:
+      sampleId: "{sample}"
+      datasetId: "data-{sample}-{instrument}-{session}-{step}-{file}"
+      measurementId: "{sample}-{instrument}-{session}-{step}-{file}"
+      equipmentId: "{instrumentId}"
+      processedFrom: "{prefix}:{sampleId}"
+      sessionDataId: "data-{sample}-{instrument}-{session}"
+      sessionId: "{sample}-{instrument}-{session}"
+      isDatumOf: "{prefix}:{sessionDataId}"
+
+- "{sample}/{instrument}/{session}/{file}.{format}":
+    match: "????/{EDS,Imaging,EPMA,SIMS,Synchrotron,EBSD}/*/*"
+    exclude:
+      - "*.ini"
+    mappings:
+      "instrumentId:instrument":
+        "SEM": "emlab:SEM_JEOL-IT800HL"
+        "SIMS": "norfab:SIMS"
+        "LOM": "emlab:LOM_Leica-MeF4"
+        "EPMA": "emlab:EPMA"
+        "Synchrotron": ""  # XXX
+      "techniqueId:instrument":
+        EDS: "chameo:EnergyDispersiveXraySpectroscopy"
+        Imaging: "chameo:ScanningElectronMicroscopy"
+        EPMA: "chameo:ElectronProbeMicroanalysis"
+        SIMS: "chameo:SecondaryIonMassSpectrometry"
+        Synchrotron: "chameo:SynchrotronXRayDiffraction"
+        EBSD: "chameo:ElectronBackscatterDiffraction"
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
+    vars:
+      sampleId: "{sample}"
+      datasetId: "data-{sample}-{instrument}-{session}-{file}"
+      measurementId: "{sample}-{instrument}-{session}-{file}"
+      equipmentId: "{instrumentId}"
+      processedFrom: "{prefix}:{sampleId}"
+      sessionDataId: "data-{sample}-{instrument}-{session}"
+      sessionId: "{sample}-{instrument}-{session}"
+      isDatumOf: "{prefix}:{sessionDataId}"
+
+- "USA alloys/SEM Imaging/{method}/{treatment}/{file}.{format}":
+    exclude:
+      - "*.ini"
+    regexp:
+      - pattern: "([a-zA-Z0-9_]+)(.*)"
+        string: "{treatment}"
+        matchvars: ["sample", "metadata"]
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
+    vars:
+      instrument: "SEM"
+      session: "{method}"
+      sampleId: "{sample}"
+      instrumentId: "emlab:SEM_JEOL-IT800HL"
+      techniqueId: "chameo:ScanningElectronMicroscopy"
+      datasetId: "data-{sample}-{instrument}-{session}-{file}"
+      measurementId: "{sample}-{instrument}-{session}-{file}"
+      equipmentId: "{instrumentId}"
+      processedFrom: "{prefix}:{sampleId}"
+      sessionDataId: "data-{sample}-{instrument}-{session}"
+      sessionId: "{sample}-{instrument}-{session}"
+      isDatumOf: "{prefix}:{sessionDataId}"
+
+- "USA alloys/LOM/WithB {sample}.{format}":
+    call:
+      - "treeweaver.hooks.formats:canonical_extension":
+      - "treeweaver.hooks.formats:media_type":
+    vars:
+      instrument: "LOM"
+      sampleId: "{sample}"
+      instrumentId: "emlab:LOM_Leica-MEF4"
+      techniqueId: "chameo:OpticalMicroscopy"
+      datasetId: "data-{sample}-{instrument}"
+      measurementId: "{sample}-{instrument}"
+      equipmentId: "{instrumentId}"
+      processedFrom: "{prefix}:{sampleId}"
+
+
+# List of file patterns to exclude from documentation
+exclude:
+- ".*"
+- "~*"
+- "*~"
+- "README*"
+
+# The different types of data to document
+# You probably don't need to modify these
+templates:
+  sample:
+    "@id": "{prefix}:{sampleId}"
+    "@type": chameo:Sample
+    title: "{sampleId}"
+    description: ""
+    comment: ""
+    hasComposition: "{hasComposition}"
+    wasGeneratedBy: "{project}"
+    contactPoint: "{contactPoint}"
+    creator: "{creator}"
+    #creationDate: "{ctime}"
+    location: "{location}"
+    isTemporalPartOf: "{isTemporalPartOf}"
+    isSpatioTemporalPartOf: "{isSpatioTemporalPartOf}"
+
+  dataset:
+    "@id": "{prefix}:{datasetId}"
+    #"@type": ["emmo:Dataset", "dcat:Dataset"]
+    "@type": "emmo:Dataset"
+    title: "{datasetId}"
+    description: ""
+    comment: ""
+    keyword: ""
+    rightsHolder: "{rightsHolder}"
+    license: "{license}"
+    wasGeneratedBy: "{project}"
+    contactPoint: "{contactPoint}"
+    creator: "{creator}"
+    seeAlso: ""
+    releaseDate: "{ctime}"
+    version: ""
+    priorVersion: ""
+    processedFrom: "{processedFrom}"
+    isDatumOf: "{isDatumOf}"
+    distribution.format: "{format}"
+    distribution.mediaType: "{mediaType}"
+    distribution.downloadURL: "{escapedurl}"
+
+  measurement:
+    "@id": "{prefix}:{measurementId}"
+    "@type": "emmo:Measurement"
+    title: "{measurementId}"
+    description: ""
+    comment: ""
+    hasInput: "{prefix}:{sampleId}"
+    hasOutput: "{prefix}:{datasetId}"
+    hasOperator: "{operator}"
+    hasParticipant: "{equipmentId}"
+    isTemporalPartOf: "{prefix}:{sessionId}"
+    #technique: "{technique}"
+
+  session:
+    "@id": "{prefix}:{sessionId}"
+    "@type": "emmo:Measurement"
+    title: "{sessionId}"
+    description: ""
+    comment: ""
+    hasInput: "{prefix}:{sampleId}"
+    hasOutput: "{prefix}:{sessionDataId}"
+    hasOperator: "{operator}"
+    hasParticipant: "{equipmentId}"
+
+  sessionData:
+    "@id": "{prefix}:{sessionDataId}"
+    "@type": "emmo:Dataset"
+    title: "{sessionDataId}"
+    description: ""
+    comment: ""
+    keyword: ""
+    rightsHolder: "{rightsHolder}"
+    license: "{license}"
+    wasGeneratedBy: "{project}"
+    contactPoint: "{contactPoint}"
+    creator: "{creator}"
+    seeAlso: ""
+    #releaseDate: "{ctime}"
+    version: ""
+    priorVersion: ""
+    processedFrom: "{processedFrom}"
+    distribution.accessURL: "{escapedurl}"

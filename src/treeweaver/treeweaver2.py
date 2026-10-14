@@ -226,6 +226,14 @@ class Pattern:
         env.setdefault("mtime", mtime)
         env.setdefault("pattern", self.pattern.format)
 
+    def assign_regexp(self, path: PathType, env: dict):
+        """Update `env` from regular expression matching."""
+        # pylint: disable=unused-argument
+        for redef in self.regexps:
+            if m := redef["pattern"].match(redef["string"].format(**env)):
+                for k, v in zip(redef["matchvars"], m.groups()):
+                    env[k] = v
+
     def assign_mappings(self, path: PathType, env: dict):
         """Update `env` with mappings.
 
@@ -249,14 +257,6 @@ class Pattern:
                     f"matching mapping for variable '{var}={env[var]}'.\n"
                     f"Path: '{path}'"
                 )
-
-    def assign_regexp(self, path: PathType, env: dict):
-        """Update `env` from regular expression matching."""
-        # pylint: disable=unused-argument
-        for redef in self.regexps:
-            m = redef["pattern"].match(redef["string"].format(**env))
-            for k, v in zip(redef["matchvars"], m.groups()):
-                env[k] = v
 
     def assign_from_call(self, path: PathType, env: dict):
         """Update `env` from calling functions described in the call
@@ -291,8 +291,8 @@ class Pattern:
             e.update(r.named)
 
             self.assign_computed_variables(path, e)
-            self.assign_mappings(path, e)
             self.assign_regexp(path, e)
+            self.assign_mappings(path, e)
             self.assign_from_call(path, e)
             for k, v in self.vars.items():
                 if v:

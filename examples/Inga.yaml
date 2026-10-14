@@ -6,7 +6,9 @@ environment:
   prefix: "idk"
 
   rightsHolder: "org:NTNU"
-  license: "https://spdx.org"  # XXX - define a license (this means All Rights Reserved)
+  accessRights: "avail:RESTRICTED"  # XXX - define the access rights
+  license: "https://spdx.org"       # XXX - define a license (this means All Rights Reserved)
+  availability: "avail:STABLE"      # Planned availability
 
   project: "proj:PhysMet"              # Project that created a sample or dataset
   contactPoint: "pers:RandiHolmestad"  # Project leader or Supervisor
@@ -32,12 +34,28 @@ environment:
 # Variables will assigned
 patterns:
 - "TEM/{alloy}/{treatment}/{instrument}/{session}/{stem}.{format}":
+    regexp:
+      - pattern: "(Gatan_|JEOL_|RA1_|SA1_|SA5_|SA_NRA_|SA_RA_|SI_|SA_)?([a-zA-Z]+)"
+        string: "{stem}"
+        matchvars: ["_", "technique"]
     mappings:
       "instrumentId:instrument":
         "ARM": "nortem:ARM200F"
         "2100": "nortem:JEM2100"
         "2100F": "nortem:JEM2100F"
         "GARM": "nortem:GARM300F2"
+      "techniqueId:technique":
+        "ADF": "temgo:AnnularDarkField"
+        "HAADF": "temgo:HighAngleAnnularDarkField"
+        "HAADFSTEM": "temgo:HighAngleAnnularDarkField"
+        "LAADF": "temgo:LowAngleAnnularDarkField"
+        "BF": "temgo:BrightFieldImaging"
+        "DF": "temgo:DarkFieldImaging"
+        "EELS": "temgo:ElectronEnergyLossSpectroscopy"
+        "CBED": "temgo:ConvergentBeamElectronDiffraction"
+        "NBDSTEM": "temgo:NanoBeamDiffractionScanningTransmissionElectronMicroscopy"
+        "": ""
+        "{_}": ""
     call:
       - "treeweaver.hooks.formats:canonical_extension":
       - "treeweaver.hooks.formats:media_type":
@@ -101,6 +119,7 @@ templates:
     comment: ""
     keyword: ""
     rightsHolder: "{rightsHolder}"
+    accessRights: "{accessRights}"
     license: "{license}"
     wasGeneratedBy: "{project}"
     contactPoint: "{contactPoint}"
@@ -147,7 +166,9 @@ templates:
     comment: ""
     keyword: ""
     rightsHolder: "{rightsHolder}"
+    accessRights: "{accessRights}"
     license: "{license}"
+    availability: "{availability}"
     wasGeneratedBy: "{project}"
     contactPoint: "{contactPoint}"
     creator: "{creator}"
