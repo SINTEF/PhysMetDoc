@@ -28,6 +28,7 @@ environment:
   isSpatioTemporalPartOf: ""
   downloadURL: ""
   technique: ""
+  techniqueId: ""
 
 
 # Patterns matching
@@ -143,9 +144,9 @@ templates:
     hasInput: "{prefix}:{sampleId}"
     hasOutput: "{prefix}:{datasetId}"
     hasOperator: "{operator}"
-    hasParticipant: "{equipmentId}"
+    hasInterpreter: "{equipmentId}"
     isTemporalPartOf: "{prefix}:{sessionId}"
-    #technique: "{technique}"
+    technique: "{techniqueId}"
 
   session:
     "@id": "{prefix}:{sessionId}"
@@ -156,7 +157,7 @@ templates:
     hasInput: "{prefix}:{sampleId}"
     hasOutput: "{prefix}:{sessionDataId}"
     hasOperator: "{operator}"
-    hasParticipant: "{equipmentId}"
+    hasInterpreter: "{equipmentId}"
 
   sessionData:
     "@id": "{prefix}:{sessionDataId}"
