@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from tripper.datadoc import told
 
 from compositions import EMMO, normalize_unit, parse
 from compositions.compositions import (
@@ -147,4 +148,4 @@ def test_parse():
     jsonld = store(ts, compositions, context=context, prefixes=prefixes)
     ts.serialize(tmpdir / "compositions.ttl")
 
-    assert jsonld["@graph"] == compositions
+    assert jsonld["@graph"] == told(compositions)["@graph"]

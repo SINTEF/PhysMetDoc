@@ -121,10 +121,14 @@ class Pattern:
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, pattern: str, templates: dict, spec: dict) -> None:
+        # pylint: disable=too-many-locals
+
         s = spec.copy()
         # Pre-process pattern
         self.patt = pattern  # un-processed
-        processed = re.sub(r"\{([^:}]*)\}", r"{\1:component}", pattern)
+        processed = re.sub(
+            r"\{([^:}]*)\}", r"{\1:component}", pattern
+        ).replace(" ", "%20")
         self.pattern = parse.compile(processed, extra_types=parse_formatters)
 
         # pylint: disable=invalid-name
@@ -141,6 +145,25 @@ class Pattern:
             self.mappings[(newvar, var)] = {
                 parse.compile(k): v for k, v in maps.items()
             }
+
+        self.regexps = []
+        for redef in s.pop("regexp", ()):
+            flags = int(redef.get("flags", 0))
+            regexp = re.compile(redef["pattern"], flags=flags)
+            if len(redef["matchvars"]) != regexp.groups:
+                raise ValueError(
+                    f"Number of 'matchvars' in regexp {redef['pattern']} in "
+                    f"pattern '{pattern}' must match the number of groups "
+                    f"in the regexp. Expected {regexp.groups}, but got "
+                    f"{len(redef['matchvars'])} matchvars."
+                )
+            self.regexps.append(
+                {
+                    "pattern": regexp,
+                    "string": redef["string"],
+                    "matchvars": redef["matchvars"],
+                }
+            )
 
         self.callspecs = []
         for callfunc in s.pop("call", []):
@@ -180,6 +203,11 @@ class Pattern:
             path: Directory or file path to document.
             env: Environment to update.
         """
+        if str(path).startswith("/") or not "baseURL" in env:
+            url = str(path)
+        else:
+            url = env["baseURL"].rstrip("/") + "/" + str(path).lstrip("/")
+
         root = Path(env.get("rootdir", "."))
         p = root / path
         if p.exists():
@@ -187,13 +215,24 @@ class Pattern:
             mtime = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
         else:
             ctime = mtime = ""
+        env.setdefault("path", str(path))
         env.setdefault("fullpath", str(p))
+        env.setdefault("url", url)
         env.setdefault("escapedpath", str(p).replace(" ", "%20"))
+        env.setdefault("escapedurl", url.replace(" ", "%20"))
         env.setdefault("filename", p.name)
         env.setdefault("dirname", str(p.parent))
         env.setdefault("ctime", ctime)
         env.setdefault("mtime", mtime)
         env.setdefault("pattern", self.pattern.format)
+
+    def assign_regexp(self, path: PathType, env: dict):
+        """Update `env` from regular expression matching."""
+        # pylint: disable=unused-argument
+        for redef in self.regexps:
+            if m := redef["pattern"].match(redef["string"].format(**env)):
+                for k, v in zip(redef["matchvars"], m.groups()):
+                    env[k] = v
 
     def assign_mappings(self, path: PathType, env: dict):
         """Update `env` with mappings.
@@ -246,15 +285,18 @@ class Pattern:
         docs: dict = {}
         if not self.match(path):
             return docs
+
         if r := self.pattern.parse(str(path)):
             e = env.copy()
             e.update(r.named)
 
             self.assign_computed_variables(path, e)
+            self.assign_regexp(path, e)
             self.assign_mappings(path, e)
             self.assign_from_call(path, e)
-
-            e.update({k: substitute(v, e) for k, v in self.vars.items() if v})
+            for k, v in self.vars.items():
+                if v:
+                    e[k] = substitute(v, e)
             for name, template in self.templates.items():
                 docs[name] = template.substitute(e)
         return docs
@@ -330,6 +372,7 @@ class Treeweaver:
                 raise UnassignedVariableError(msg)
             for k, v in d.items():
                 docs[k].append(v)
+
         return dict(docs)
 
     def document_pathtable(
@@ -391,9 +434,11 @@ class Treeweaver:
                 self.env["ctime"] = val
 
             dirpath = Path(getval(row, "Path"))
-            filepath = dirpath / getval(row, "File Name")
+            filepath = Path(
+                str(dirpath / getval(row, "File Name")).replace(" ", "%20")
+            )
             relpath = (
-                filepath.relative_to(self.env["baseURL"])
+                filepath.relative_to(self.env["baseURL"].replace(" ", "%20"))
                 if "baseURL" in self.env
                 else filepath
             )
@@ -464,18 +509,20 @@ class Treeweaver:
         source: PathType,
         output: PathType,
         informat: Optional[str] = None,
-        sheet: Union[str, int] = 1,
+        sheet: Union[str, int] = 0,
         mappings: Optional[dict] = None,
         reader_param: Optional[dict] = None,
         outformat: Optional[str] = None,
         mode: str = "update",
         **kwargs,
     ) -> None:
-        """Like savedoc(), but gets the paths to document from a table
-        instead from a directory tree.
+        """Document `source` and save it to table(s) that can be serialised
+        to RDF with Tripper.
 
         Arguments:
-            source: File name of table with paths to document.
+            source: If directory, it is the root directory to document.
+                Otherwise, `source` should be a table with file paths to
+                document.
             output: Output path. Format is inferred from the file extension
                 unless explicitly provided via `format`.
             informat: Format of ` filename` to read.

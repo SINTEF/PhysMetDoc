@@ -1,4 +1,4 @@
-@id,@type,name,manufacturer,model,modelDate,serialNumber,software,description,contactPerson,location,comment,seeAlso
+@id,@type,name,manufacturer,model,modelDate,serialNumber,software,description,contactPoint,location,comment,seeAlso
 temgemini:GARM300F2,chameo:TransmissionElectronMicroscope,GARM-300F2,JEOL,GARM-300F2,2025,,,Jeol JEM GARM300F2 - Corrected ColdFEG microscope,pers:RandiHolmestad,,,
 temgemini:ARM200F,chameo:TransmissionElectronMicroscope,ARM-200F,JEOL,ARM-200F,2013,,,Jeol JEM ARM200F - Double corrected ColdFEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
 temgemini:2100F,chameo:TransmissionElectronMicroscope,JEM-2100F,JEOL,JEM-2100F,2013,,,Jeol JEM 2100F - FEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f

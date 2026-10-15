@@ -173,6 +173,11 @@ patterns:
       match: "Data/{SIMS,SEM}/**"  # Only match "instrument"-directories named "SIMS" and "SEM"
       exclude:
         - "**/*.tmp"  # Exclude files ending with .tmp
+      regexp:
+        # List of regular expression for variable assignments
+        - pattern: "(.*)\s*"               # regular expression
+          string: "{session}"              # string to match against
+          matchvars: ["stripped_session"]  # variables assigned from parenthesis matching
       mappings:
         # Update or define variables via mappings
         # The below updates `instrument` according to the following statements:
@@ -222,6 +227,7 @@ Currently patterns supports the following fields:
   See [Glob matching] for valid exclude patterns.
 - **appliesTo**: List of template names that the pattern applies to.
   The default is to apply it to all patterns.
+- **regexp**: Assign variables by regular expression matching.
 - **mappings**: Updates the environment based on mapping transformations.
 - **call**: Call a function that should return a dict with additional variables for the environment.
 - **vars**: Updates the environment with additional variable definitions.

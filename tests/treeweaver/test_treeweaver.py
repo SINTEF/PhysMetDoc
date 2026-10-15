@@ -4,7 +4,7 @@
 import json
 import subprocess
 
-import treeweaver
+from treeweaver import treeweaver
 
 
 def run_path2dict(*args, path="tests/treeweaver/data/Andreas", intent=None):

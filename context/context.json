@@ -160,6 +160,10 @@
       "@id": "emmo:EMMO_f702bad4_fc77_41f0_a26d_79f6444fd4f3",
       "@type": "@id"
     },
+    "isTemporalPartOf": {
+      "@id": "emmo:EMMO_f722a7a9_864d_4896_a331_f90141f90a0a",
+      "@type": "@id"
+    },
     "isInputOf": {
       "@id": "emmo:EMMO_1494c1a9_00e1_40c2_a9cc_9bbf302a1cac",
       "@type": "@id"
