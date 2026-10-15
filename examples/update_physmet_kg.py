@@ -61,8 +61,8 @@ def get(url: str, outfile: str | Path) -> None:
         response.raise_for_status()
 
 
-# get(shared_resources_url, shared_resources)
-# get(ListSharePoint_url, ListSharePoint)
+get(shared_resources_url, shared_resources)
+get(ListSharePoint_url, ListSharePoint)
 
 
 # Extract prefixes

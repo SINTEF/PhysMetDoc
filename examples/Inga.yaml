@@ -29,6 +29,8 @@ environment:
   downloadURL: ""
   technique: ""
   techniqueId: ""
+  designationId: ""
+  temperId: ""
 
 
 # Patterns matching
@@ -39,6 +41,12 @@ patterns:
       - pattern: "(Gatan_|JEOL_|RA1_|SA1_|SA5_|SA_NRA_|SA_RA_|SI_|SA_)?([a-zA-Z]+)"
         string: "{stem}"
         matchvars: ["_", "technique"]
+      - pattern: "([0-9]{4}).*"
+        string: "{alloy}"
+        matchvars: ["designation"]
+      - pattern: ".*_(T[0-9])_.*"
+        string: "{treatment}"
+        matchvars: ["temper"]
     mappings:
       "instrumentId:instrument":
         "ARM": "nortem:ARM200F"
@@ -69,11 +77,20 @@ patterns:
       sessionDataId: "data-{instrument}-{session}-{treatment}"
       sessionId: "{instrument}-{session}-{treatment}"
       isDatumOf: "{prefix}:{sessionDataId}"
+      designationId: "ad:AA{designation}"
+      temperId: "at:{temper}"
 
 - "SEM/{alloy}/{method}/{treatment}/{stem}.{format}":
     call:
       - "treeweaver.hooks.formats:canonical_extension":
       - "treeweaver.hooks.formats:media_type":
+    regexp:
+      - pattern: "([0-9]{4}).*"
+        string: "{alloy}"
+        matchvars: ["designation"]
+      - pattern: ".*_(T[0-9])_.*"
+        string: "{treatment}"
+        matchvars: ["temper"]
     vars:
       sampleId: "sample-{treatment}"
       datasetId: "data-{method}-{treatment}-{stem}"
@@ -83,6 +100,8 @@ patterns:
       sessionDataId: "data-{method}-{treatment}"
       sessionId: "{method}-{treatment}"
       isDatumOf: "{prefix}:{sessionDataId}"
+      designationId: "ad:AA{designation}"
+      temperId: "at:{temper}"
 
 
 
@@ -110,6 +129,8 @@ templates:
     location: "{location}"
     isTemporalPartOf: "{isTemporalPartOf}"
     isSpatioTemporalPartOf: "{isSpatioTemporalPartOf}"
+    alloyDesignation: "{designationId}"
+    temper: "{temperId}"
 
   dataset:
     "@id": "{prefix}:{datasetId}"
