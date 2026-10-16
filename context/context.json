@@ -164,6 +164,14 @@
       "@id": "emmo:EMMO_f722a7a9_864d_4896_a331_f90141f90a0a",
       "@type": "@id"
     },
+    "hasTask": {
+      "@id": "emmo:EMMO_70da982d_1810_4b01_9630_a28e216ecd9a",
+      "@type": "@id"
+    },
+    "isTaskOf": {
+      "@reverse": "emmo:EMMO_70da982d_1810_4b01_9630_a28e216ecd9a",
+      "@type": "@id"
+    },
     "isInputOf": {
       "@id": "emmo:EMMO_1494c1a9_00e1_40c2_a9cc_9bbf302a1cac",
       "@type": "@id"
@@ -178,6 +186,10 @@
     },
     "Measurement": {
       "@id": "emmo:EMMO_463bcfda_867b_41d9_a967_211d4d437cfb",
+      "@type": "http://www.w3.org/2002/07/owl#Class"
+    },
+    "Workflow": {
+      "@id": "emmo:EMMO_64963ed6_39c9_4258_85e0_6466c4b5420c",
       "@type": "http://www.w3.org/2002/07/owl#Class"
     },
     "Sample": {
@@ -418,6 +430,10 @@
     },
     "wasGeneratedBy": {
       "@id": "prov:wasGeneratedBy",
+      "@type": "@id"
+    },
+    "wasAssociatedWith": {
+      "@id": "prov:wasAssociatedWith",
       "@type": "@id"
     },
     "datamodel": {
