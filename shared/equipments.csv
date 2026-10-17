@@ -1,19 +1,18 @@
 @id,@type,name,manufacturer,model,modelDate,serialNumber,software,description,contactPoint,location,comment,seeAlso
-temgemini:GARM300F2,chameo:TransmissionElectronMicroscope,GARM-300F2,JEOL,GARM-300F2,2025,,,Jeol JEM GARM300F2 - Corrected ColdFEG microscope,pers:RandiHolmestad,,,
-temgemini:ARM200F,chameo:TransmissionElectronMicroscope,ARM-200F,JEOL,ARM-200F,2013,,,Jeol JEM ARM200F - Double corrected ColdFEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
-temgemini:2100F,chameo:TransmissionElectronMicroscope,JEM-2100F,JEOL,JEM-2100F,2013,,,Jeol JEM 2100F - FEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f
-temgemini:2100,chameo:TransmissionElectronMicroscope,JEM-2100,JEOL,JEM-2100,2013,,,Jeol JEM 2100 - LaB6 microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100
-emlab:TEM_JEOL-JEM-2010,chameo:TransmissionElectronMicroscope,JEM-2010,JEOL,JEM-2010,1994,,,,,,Decommissioned,
-emlab:SemA,chameo:ScanningElectronMicroscope,Sem A,JEOL,JSM 840,1989,,,JEOL JSM 840,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoSEM_A.pdf/bd8b7377-2d34-45b7-ae66-c51dfb57b73d
-emlab:SEM_Zeiss-SUPRA-55VP,chameo:ScanningElectronMicroscope,LVFESEM,Zeiss,SUPRA 55VP,2006,SUPRA 55VP-25-49,,,,,,
-emlab:SEM_Hitachi-S-4300SE,chameo:ScanningElectronMicroscope,SEM Hitachi S-4300SE,Hitachi,S-4300SE,2002,,,,,,,
+nortem:GARM300F2,chameo:TransmissionElectronMicroscope,GARM-300F2,JEOL,GARM-300F2,2025,,,Jeol JEM GARM300F2 - Corrected ColdFEG microscope,pers:RandiHolmestad,,,
+nortem:ARM200F,chameo:TransmissionElectronMicroscope,ARM-200F,JEOL,ARM-200F,2013,,,Jeol JEM ARM200F - Double corrected ColdFEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/fgjgj
+nortem:JEM2100F,chameo:TransmissionElectronMicroscope,JEM-2100F,JEOL,JEM-2100F,2013,,,Jeol JEM 2100F - FEG microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100f
+nortem:JEM2100,chameo:TransmissionElectronMicroscope,JEM-2100,JEOL,JEM-2100,2013,,,Jeol JEM 2100 - LaB6 microscope,pers:RandiHolmestad,,,https://www.ntnu.edu/web/temgemini/tem/-/asset_publisher/2EWM49wMslOy/content/jeol-jem-2100
+emlab:JEM2010,chameo:TransmissionElectronMicroscope,JEM-2010,JEOL,JEM-2010,1994,,,,,,Decommissioned,
+emlab:SEM_JSM800,chameo:ScanningElectronMicroscope,SEM JSM840,JEOL,JSM 840,1989,,,JEOL JSM 840,,,Decommissioned,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoSEM_A.pdf/bd8b7377-2d34-45b7-ae66-c51dfb57b73d
+emlab:SEM_Zeiss-SUPRA-55VP,chameo:ScanningElectronMicroscope,LVFESEM,Zeiss,SUPRA 55VP,2006,SUPRA 55VP-25-49,,,,,Decommissioned,
+emlab:SEM_Hitachi-S-4300SE,chameo:ScanningElectronMicroscope,SEM Hitachi S-4300SE,Hitachi,S-4300SE,2002,,,,,,Decommissioned,
 emlab:SEM_Hitachi-S-3400N,chameo:ScanningElectronMicroscope,SEM Hitachi S-3400N,Hitachi,S-3400N,,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/S-3400NSpecifications.pdf/6b94c26f-a9d4-4f36-82b3-7e9eb3603922
 emlab:SEM_Zeiss-ULTRA-55LE,chameo:ScanningElectronMicroscope,SEM Zeiss ULTRA 55LE,Zeiss,ULTRA 55LE,2007,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/Em-lab-ULTRA_Technical.pdf/aad80164-f671-4c14-81c8-3a42c45f9dd8
-emlab:SEM_JEOL-IT800HL,chameo:ScanningElectronMicroscope,SEM JEOL IT800HL,JEOL,IT800HL,,,,,,,,
+emlab:SEM_JEOL-IT800HL,chameo:ScanningElectronMicroscope,SEM JEOL IT800HL,JEOL,IT800HL,2024,,,,,,Used by Andreas,
 emlab:EPMA,temgo:ElectronProbeMicroAnalyser,EPMA,JEOL,JXA-8500F,,,,,,,,https://www.ntnu.edu/documents/140082/1269041159/EM-lab-ProdInfoEPMA.pdf/13290111-9267-44d5-ab3e-20d9b9e13c6e
 emlab:FIB_FEI-200,temgo:FocusedIonBeam,FIB,FEI,200,2008,,,,,,,
-emlab:SIMS,temgo:SecondaryIonMassSpectrometry,SIMS,,,,,"Aphelion 4.3.1 from Amerinex Applied Imaging , Inc. and ADCIS SA",SIMS used by Andreas,,,"In Oslo, decommissioned?",
-emlab:LOM_Leica-MeF4,temgo:LightOpticalMicroscope,LOM,Leica,MeF4,,,,LOM used by Andreas,,,,
+emlab:LOM_Leica-MeF4,temgo:LightOpticalMicroscope,LOM,Leica,MeF4,,,,LOM used by Andreas,,,Used by Andreas,
 emlab:FishionePlasmaCleaner,temgo:PlasmaCleaner,Fishione Plasma Cleaner,,,,,,,,,,http://www.fischione.com/products/model_1020.asp
 emlab:AgarCoater,temgo:SEMSampleCoater,Agar Turbo Carbon Coater,,,,,,,,,,
 emlab:JeolCrossPolisher,temgo:CrossPolisher,JEOL - IB-19520CCP - Cross Polisher,JEOL,IB-19520CCP,,,,,,,,
@@ -22,4 +21,7 @@ elkem:IronFurnace,temgo:Furnace,Furnace,,,,,,Iron furnace,,,,
 elkem:TreatmentLadle,temgo:Ladle,Ladle,,,,,,,,,,
 elkem:InoculationCrucible,temgo:Crucible,Crucible,,,,,,,,,,
 elkem:MouldBars30mm,temgo:Mould,Sand mould,,,,,,,,,,
+norfab:SIMS,temgo:SecondaryIonMassSpectrometry,SIMS,Ametek,,,,"Aphelion 4.3.1 from Amerinex Applied Imaging , Inc. and ADCIS SA",SIMS at UiO NORFAB,,,Used by Andreas,
 pfiblab:Helios_G5,temgo:FocusedIonBeam,FIB,Helios,G5,,,,,,,,
+gdlab:GDMS,,GDMS,NuInstruments,,2016,,,,,,used by Armel,
+gdlab:GDOES,,,,,,,,,,,,
