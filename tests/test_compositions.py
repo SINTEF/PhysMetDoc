@@ -145,6 +145,7 @@ def test_parse():
     }
 
     ts = Triplestore(backend="rdflib")
+    context.sync_prefixes(ts, update=False)
     jsonld = store(ts, compositions, context=context, prefixes=prefixes)
     ts.serialize(tmpdir / "compositions.ttl")
 

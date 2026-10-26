@@ -11,8 +11,15 @@ proj,https://www.ntnu.edu/physmet/project/,Local prefix for projects
 sw,https://www.ntnu.edu/physmet/software/,Prefix for PhysMet-related software
 ,,
 emlab,https://www.ntnu.edu/ima/research/emlab/equipment/,Prefix for equipment at EMLAB
-nanolab,https://www.ntnu.edu/nanolab/equipment/,Prefix for equipment at Nanolab
+gdlab,https://www.ntnu.edu/gdlab/equipment/,Prefix for equipment at GDLab
+manulab,https://www.ntnu.no/ivb/manulab/,Prefix for equipment at Manulab
+mimac,https://www.ntnu.edu/mimac/home/,Prefix for equipment at MiMaC
+nanolab,https://www.ntnu.edu/nanolab/equipment/,Prefix for equipment at NTNU Nanolab
+norfab,https://www.mn.uio.no/fysikk/english/research/about/infrastructure/facilities/material-characterisation/micro-nano/norfab/,Prefix for equipment at NorFab
 pfiblab,https://smarth-ntnu.com/,Infrastructure for Materials Research for Transporting Hydrogen (SMART-H)
+nortem,https://www.ntnu.edu/temgemini/nortem/,Prefix for equipment at NORTEM
+xrdlab,https://www.ntnu.edu/ima/research/labs/powder-diffraction-lab/,Prefix for equipment at XRD-Lab
+napic,https://www.ntnu.edu/napic,Prefix for equipment at NTNU Aluminium Product Innovation Center (NAPIC)
 temgemini,https://www.ntnu.edu/temgemini/tem/equipment/,Prefix for equipment at the TEM Gemini Centre
 ,,
 emmo,https://w3id.org/emmo#,Elementary Multiperspective Material Ontology (EMMO)
