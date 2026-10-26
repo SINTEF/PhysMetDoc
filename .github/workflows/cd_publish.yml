@@ -4,9 +4,10 @@ on:
   release:
     types: [published]
   # Or trigger on tag push:
-  # push:
-  #   tags:
-  #     - "v*"
+  #push:
+  #  tags: ["v[0-9]*"]
+  push:
+    branches: ["main"]
 
 jobs:
   build:
