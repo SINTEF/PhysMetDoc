@@ -7,7 +7,7 @@ on:
   #push:
   #  tags: ["v[0-9]*"]
   push:
-    branches: ["main"]
+    branches: ["main"]  # XXX
 
 jobs:
   build:
@@ -47,3 +47,5 @@ jobs:
           path: dist/
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true  # XXX
