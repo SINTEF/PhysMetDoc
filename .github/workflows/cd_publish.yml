@@ -37,6 +37,7 @@ jobs:
       url: https://pypi.org/project/physmetdoc
     permissions:
       id-token: write  # Mandatory for Trusted Publishing via OIDC [0.1.10]
+      contents: read   # Good practice to let it access repo files safely
     steps:
       - name: Download distributions
         uses: actions/download-artifact@v7
