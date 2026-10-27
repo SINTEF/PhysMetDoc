@@ -162,18 +162,22 @@ def _parse_dm3_tags(filename: PathType, maxarray: int = 3) -> dict:
         return tags
 
     # pylint: disable=import-outside-toplevel
-    from dm3_lib import DM3
+    from ncempy.io import dm
 
-    dm3 = DM3(filename)
-    tags.update(dm3.tags)  # Quite large. Skip it?
+    with dm.fileDM(filename) as dm3:
+        # Useful subset of experimental parameters
+        meta = dm3.getMetadata(0)
 
-    # Make, Model and Mode are also available from the tags:
+        # tags.update(dm3.allTags)  # Quite large. Skip it?
+        tags.update(meta)
+
+    # Make, Model and Mode are also available from `dm3.allTags`:
     #   - root.ImageList.1.ImageTags.Microscope Info.Name
     #   - root.ImageList.1.ImageTags.Microscope Info.Microscope
     #   - root.ImageList.1.ImageTags.Microscope Info.Operation Mode
-    tags["Make"] = dm3.info["name_old"].decode()
-    tags["Model"] = dm3.info["micro_old"].decode()
-    tags["Mode"] = dm3.info["mode"].decode()
+    tags["Make"] = meta["Microscope Info Name"]
+    tags["Model"] = meta["Microscope Info Microscope"]
+    tags["Mode"] = meta["Microscope Info Operation Mode"]
     return tags
 
 
