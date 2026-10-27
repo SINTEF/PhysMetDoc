@@ -30,7 +30,6 @@ dependencies = [
 excel = ["openpyxl"]
 callfunctions = [
     "pillow>=12.0.0",
-    #"dm3-lib @ git+https://github.com/piraynal/pyDM3reader.git@main",
     "ncempy>=1.16",
 ]
 testing = [
@@ -45,7 +44,6 @@ pre-commit = [
 ]
 dev = [
     "physmetdoc[pre-commit]",
-    "virtualenvwrapper==6.1.1",
     "keyring>=25.6.0",
 ]
 
