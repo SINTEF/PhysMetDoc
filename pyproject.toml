@@ -10,11 +10,18 @@ authors = [
     { name = "Michele Brigadoi", email = "michele.brigadoi@unibo.it" },
 ]
 requires-python = ">=3.10"
+
+# NOTE: During development, it is ok to specify git dependencies like
+#
+#    tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@master
+#
+# but for release these must match package version.
 dependencies = [
     "PyYAML>=6.0.3",
     "parse>=1.22.1",
     "wcmatch>=11.0.1",
-    "tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@sync_prefixes",
+    #"tripper[datadoc] @ git+https://github.com/EMMC-ASBL/tripper.git@master",
+    "tripper[datadoc]>=0.5.5",
     "jsonschema>=4.26.0",
     "requests>=2.34.2",
 ]
