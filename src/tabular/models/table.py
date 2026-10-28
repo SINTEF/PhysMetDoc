@@ -3,15 +3,11 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import (
     Any,
-    Dict,
-    Iterator,
-    List,
     Literal,
-    Optional,
-    Sequence,
     Union,
 )
 
@@ -37,9 +33,9 @@ class Table:
 
     def __init__(
         self,
-        name: Optional[str] = None,
-        headers: Optional[List[str]] = None,
-        rows: Optional[List[List[Any]]] = None,
+        name: str | None = None,
+        headers: list[str] | None = None,
+        rows: list[list[Any]] | None = None,
     ):
         """
         Initializes a new Table.
@@ -54,7 +50,7 @@ class Table:
         """
         self.name = name
         self.headers = headers if headers is not None else []
-        self.rows: List[List[Any]] = []
+        self.rows: list[list[Any]] = []
         if rows:
             self.append_rows(rows)
 
@@ -81,7 +77,7 @@ class Table:
                 if i < len(widths) and len(cell) > widths[i]:
                     widths[i] = len(cell)
 
-        def fmt_row(row_data: List[str]) -> str:
+        def fmt_row(row_data: list[str]) -> str:
             return (
                 "| "
                 + " | ".join(
@@ -115,7 +111,7 @@ class Table:
             f"columns={len(self.headers)}, rows={len(self.rows)})>"
         )
 
-    def __getitem__(self, key: IndexType) -> List[Any]:
+    def __getitem__(self, key: IndexType) -> list[Any]:
         """
         Allows indexing into the table to get a row or a column.
 
@@ -142,7 +138,7 @@ class Table:
             "Key must be an integer (row index) or string (column name)."
         )
 
-    def __iter__(self) -> Iterator[List[Any]]:
+    def __iter__(self) -> Iterator[list[Any]]:
         """
         Allows iterating over the rows of the table.
 
@@ -157,7 +153,7 @@ class Table:
     def read(
         cls,
         path: PathType,
-        format: Optional[str] = None,
+        format: str | None = None,
         sheet: IndexType = 0,
         **kwargs: Any,
     ) -> Table:
@@ -190,16 +186,16 @@ class Table:
                 "Expected a single table but found multiple. "
                 "Use Tables.read() instead."
             )
-        return getattr(tables, "first")
+        return tables.first
 
     # --- Instance Methods ---
 
     def write(
         self,
-        path: Optional[PathType] = None,
-        format: Optional[str] = None,
+        path: PathType | None = None,
+        format: str | None = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Writes this Table directly to a file or returns a string.
 
@@ -216,7 +212,7 @@ class Table:
 
         return write(self, path=path, format=format, **kwargs)
 
-    def append_row(self, row: List[Any]) -> None:
+    def append_row(self, row: list[Any]) -> None:
         """
         Appends a single row to the table sequentially.
 
@@ -235,7 +231,7 @@ class Table:
             raise ValueError(msg)
         self.rows.append(list(row))
 
-    def append_rows(self, rows: List[List[Any]]) -> None:
+    def append_rows(self, rows: list[list[Any]]) -> None:
         """
         Appends multiple rows to the table sequentially.
 
@@ -286,10 +282,10 @@ class Table:
 
         for other_row in other.rows:
             row_dict = dict(zip(other.headers, other_row))
-            mapped_row = [row_dict.get(h, None) for h in self.headers]
+            mapped_row = [row_dict.get(h) for h in self.headers]
             self.rows.append(mapped_row)
 
-    def to_dict_list(self) -> List[Dict[str, Any]]:
+    def to_dict_list(self) -> list[dict[str, Any]]:
         """
         Converts table into a list of dicts mapping headers to values.
 
@@ -300,8 +296,8 @@ class Table:
 
     def match_rows(
         self,
-        columns: Union[IndexType, Sequence[IndexType]],
-        values: Union[Any, Sequence[Any]],
+        columns: IndexType | Sequence[IndexType],
+        values: Any | Sequence[Any],
     ) -> list:
         """
         Matches rows whose values in the specified columns equals `values`.
@@ -330,8 +326,8 @@ class Table:
     # pylint: disable=too-many-arguments,too-many-positional-arguments
     def lookup(
         self,
-        columns: Union[IndexType, Sequence[IndexType]],
-        values: Union[Any, Sequence[Any]],
+        columns: IndexType | Sequence[IndexType],
+        values: Any | Sequence[Any],
         outcol: IndexType,
         mode: Literal["unique", "all", "first"] = "all",
         default: Any = NODEFAULT,

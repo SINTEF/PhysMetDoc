@@ -3,7 +3,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import tabular.models
 
@@ -17,10 +17,10 @@ class JSONWriter(BaseWriter):
 
     def write(
         self,
-        data: Union[tabular.models.Table, tabular.models.Tables],
-        path: Optional[Path] = None,
+        data: tabular.models.Table | tabular.models.Tables,
+        path: Path | None = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Writes tabular data to a JSON file as an object mapping table names
         to lists of row dictionaries.
 

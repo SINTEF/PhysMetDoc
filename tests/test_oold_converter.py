@@ -7,7 +7,6 @@ import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional
 
 import jsonschema
 import pytest
@@ -88,7 +87,7 @@ def test_infer_type():
     ]
     for raw_values, expected in cases:
         # Re-cast to bypass Pylance's invariance rule for test cases
-        values: List[Optional[str]] = list(raw_values)
+        values: list[str | None] = list(raw_values)
         assert infer_type(values) == expected
 
 
@@ -100,7 +99,7 @@ def test_infer_type_blank_entries_dont_affect_type():
         (["1", "", "2.5"], "number"),
     ]
     for raw_values, expected in cases:
-        values: List[Optional[str]] = list(raw_values)
+        values: list[str | None] = list(raw_values)
         assert infer_type(values) == expected
 
 
@@ -118,7 +117,7 @@ def test_csv_to_json_schema_content():
     output_file = tmp_path / "Test_input.schema.json"
     assert output_file.exists(), "The JSON schema was not created."
 
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         schema = json.load(f)
 
     assert schema["$id"] == "Test_input.schema.json"
@@ -150,9 +149,7 @@ def test_csv_to_json_schema_type_inference():
 
     csv_to_json_schema(input_csv, tmp_path)
 
-    with open(
-        tmp_path / "Inference_test.schema.json", "r", encoding="utf-8"
-    ) as f:
+    with open(tmp_path / "Inference_test.schema.json", encoding="utf-8") as f:
         schema = json.load(f)
 
     properties = schema["properties"]
@@ -176,9 +173,7 @@ def test_csv_to_json_schema_strict_number_inference():
 
     csv_to_json_schema(input_csv, tmp_path)
 
-    with open(
-        tmp_path / "Strict_numbers.schema.json", "r", encoding="utf-8"
-    ) as f:
+    with open(tmp_path / "Strict_numbers.schema.json", encoding="utf-8") as f:
         schema = json.load(f)
 
     properties = schema["properties"]
@@ -196,9 +191,7 @@ def test_csv_to_json_schema_no_rows_omits_examples():
 
     csv_to_json_schema(input_csv, tmp_path)
 
-    with open(
-        tmp_path / "Headers_only.schema.json", "r", encoding="utf-8"
-    ) as f:
+    with open(tmp_path / "Headers_only.schema.json", encoding="utf-8") as f:
         schema = json.load(f)
 
     for prop in schema["properties"].values():
@@ -214,7 +207,7 @@ def test_csv_to_json_schema_base_url():
     csv_to_json_schema(input_csv, tmp_path, base_url=base_url)
 
     output_file = tmp_path / "Test_input.schema.json"
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         schema = json.load(f)
 
     assert schema["$id"] == f"{base_url}/Test_input.schema.json"
@@ -240,7 +233,7 @@ def test_csv_to_json_schema_properties_mapping():
     csv_to_json_schema(input_csv, tmp_path, properties_mapping=mapping)
 
     output_file = tmp_path / "Test_input.schema.json"
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         schema = json.load(f)
 
     properties = schema["properties"]
@@ -268,7 +261,7 @@ def test_csv_to_json_schema_oold_compliance():
     csv_to_json_schema(input_csv, tmp_path)
 
     output_file = tmp_path / "Test_input.schema.json"
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         generated_schema = json.load(f)
 
     try:
@@ -326,7 +319,7 @@ def test_json_schema_to_csv_content():
     output_file = tmp_path / "test_input.csv"
     assert output_file.exists(), "The CSV file was not created."
 
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         reader = list(csv.DictReader(f))
 
     assert len(reader) == 1
@@ -352,9 +345,9 @@ def test_process_path_directory():
     process_path(DATA_DIR, tmp_path, "csv2json")
 
     expected_output = tmp_path / "Test_input.schema.json"
-    assert (
-        expected_output.exists()
-    ), "The directory processor failed to generate the schema."
+    assert expected_output.exists(), (
+        "The directory processor failed to generate the schema."
+    )
 
 
 def test_process_path_directory_skips_mismatched_files():
@@ -433,17 +426,17 @@ def test_process_path_exclude_files():
     )
 
     # Check that keep_me.csv was processed
-    assert (
-        out_dir / "Keep_me.schema.json"
-    ).exists(), "The non-excluded file was not processed."
+    assert (out_dir / "Keep_me.schema.json").exists(), (
+        "The non-excluded file was not processed."
+    )
 
     # Check that the other two were skipped
-    assert not (
-        out_dir / "Skip_me.schema.json"
-    ).exists(), "An excluded file was incorrectly processed."
-    assert not (
-        out_dir / "Also_skip.schema.json"
-    ).exists(), "An excluded file was incorrectly processed."
+    assert not (out_dir / "Skip_me.schema.json").exists(), (
+        "An excluded file was incorrectly processed."
+    )
+    assert not (out_dir / "Also_skip.schema.json").exists(), (
+        "An excluded file was incorrectly processed."
+    )
 
 
 def test_conversion_error_wraps_original_exception():

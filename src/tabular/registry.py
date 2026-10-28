@@ -1,7 +1,7 @@
 """Format registry for readers and writers."""
 
 import logging
-from typing import Any, Dict
+from typing import Any
 
 # Readers
 from .readers.csv_reader import CSVReader
@@ -15,7 +15,7 @@ from .writers.md_writer import MDWriter
 
 logger = logging.getLogger(__name__)
 
-FORMAT_REGISTRY: Dict[str, Dict[str, Any]] = {
+FORMAT_REGISTRY: dict[str, dict[str, Any]] = {
     "csv": {"reader": CSVReader, "writer": CSVWriter, "multi_sheet": False},
     "xlsx": {
         "reader": ExcelReader,

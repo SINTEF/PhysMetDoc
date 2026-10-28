@@ -10,7 +10,7 @@ from collections import defaultdict
 from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 import parse
 import yaml
@@ -203,7 +203,7 @@ class Pattern:
             path: Directory or file path to document.
             env: Environment to update.
         """
-        if str(path).startswith("/") or not "baseURL" in env:
+        if str(path).startswith("/") or "baseURL" not in env:
             url = str(path)
         else:
             url = env["baseURL"].rstrip("/") + "/" + str(path).lstrip("/")
@@ -321,8 +321,8 @@ class Treeweaver:
     def __init__(
         self,
         configfile: PathType,
-        rootdir: Optional[PathType] = None,
-        settings: Optional[Mapping] = None,
+        rootdir: PathType | None = None,
+        settings: Mapping | None = None,
     ) -> None:
         self.settings = dict(settings) if settings else {}
         self.env: dict = {}
@@ -336,7 +336,7 @@ class Treeweaver:
     def parse_conf(self, yamlfile: PathType) -> None:
         """Parses a treeweaver YAML configuration and updating the
         environment and templates, while replacing the patterns."""
-        with open(yamlfile, "r", encoding="utf-8") as f:
+        with open(yamlfile, encoding="utf-8") as f:
             d = yaml.safe_load(f)
             self.env.update(d.get("environment", {}))
             templates = d.get("templates", {})
@@ -378,10 +378,10 @@ class Treeweaver:
     def document_pathtable(
         self,
         filename: PathType,
-        format: Optional[str] = None,  # pylint: disable=redefined-builtin
-        sheet: Union[str, int] = 1,
-        reader_param: Optional[dict] = None,
-        mappings: Optional[dict] = None,
+        format: str | None = None,  # pylint: disable=redefined-builtin
+        sheet: str | int = 1,
+        reader_param: dict | None = None,
+        mappings: dict | None = None,
     ) -> dict:
         """Document a file paths listed in a table.
 
@@ -472,9 +472,7 @@ class Treeweaver:
                     docs[k].extend(v)
         return dict(docs)
 
-    def totables(
-        self, docs: dict, oldtables: Optional[Tables] = None
-    ) -> Tables:
+    def totables(self, docs: dict, oldtables: Tables | None = None) -> Tables:
         """Create table documentation of directory tree.
 
         Processes all templates from the documented directory tree and
@@ -508,11 +506,11 @@ class Treeweaver:
         self,
         source: PathType,
         output: PathType,
-        informat: Optional[str] = None,
-        sheet: Union[str, int] = 0,
-        mappings: Optional[dict] = None,
-        reader_param: Optional[dict] = None,
-        outformat: Optional[str] = None,
+        informat: str | None = None,
+        sheet: str | int = 0,
+        mappings: dict | None = None,
+        reader_param: dict | None = None,
+        outformat: str | None = None,
         mode: str = "update",
         **kwargs,
     ) -> None:
@@ -587,9 +585,9 @@ def globcompile(pattern):
 
 def totable(
     dicts: list,
-    name: Optional[str] = None,
-    indexcolumn: Optional[str] = "@id",
-    oldtable: Optional[Table] = None,
+    name: str | None = None,
+    indexcolumn: str | None = "@id",
+    oldtable: Table | None = None,
 ) -> Table:
     """Convert a list of dictionaries to a Table.
 
@@ -659,7 +657,7 @@ def substitute(stencil: ValueType, env: dict) -> ValueType:
     raise TypeError("Unsupported stencil type:", type(stencil))
 
 
-def main(argv: Optional[list[str]] = None):
+def main(argv: list[str] | None = None):
     """Main function for the command-line interface.
 
     Arguments:

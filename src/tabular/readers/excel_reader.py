@@ -4,7 +4,7 @@ import importlib
 import logging
 import warnings
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any
 from zipfile import BadZipFile
 
 import tabular.models
@@ -15,7 +15,7 @@ from .base import BaseReader
 logger = logging.getLogger(__name__)
 
 
-def _load_openpyxl() -> Tuple[Any, Any]:
+def _load_openpyxl() -> tuple[Any, Any]:
     """Retrieves the openpyxl module and exception classes if installed."""
     try:
         mod = importlib.import_module("openpyxl")

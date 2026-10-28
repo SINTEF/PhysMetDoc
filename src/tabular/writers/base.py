@@ -3,7 +3,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from tabular.models import Table, Tables
 
@@ -18,10 +18,10 @@ class BaseWriter(ABC):
     @abstractmethod
     def write(
         self,
-        data: Union[Table, Tables],
-        path: Optional[Path] = None,
+        data: Table | Tables,
+        path: Path | None = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Writes data to a physical file, or returns it as a formatted string.
 
@@ -35,7 +35,7 @@ class BaseWriter(ABC):
             Optional[str]: Serialized string if path is None, else None.
         """
 
-    def _ensure_tables(self, data: Union[Table, Tables]) -> Tables:
+    def _ensure_tables(self, data: Table | Tables) -> Tables:
         """
         Helper method to normalize inputs to a Tables collection.
 
@@ -51,7 +51,7 @@ class BaseWriter(ABC):
             return collection
         return data
 
-    def _ensure_directory(self, path: Optional[Path]) -> None:
+    def _ensure_directory(self, path: Path | None) -> None:
         """
         Creates parent directories if they do not exist.
 
@@ -62,7 +62,7 @@ class BaseWriter(ABC):
             logger.info("Creating missing directories for: %s", path.parent)
             path.parent.mkdir(parents=True, exist_ok=True)
 
-    def _validate_write_path(self, path: Optional[Path]) -> None:
+    def _validate_write_path(self, path: Path | None) -> None:
         """
         Validates the output path to ensure it is not a directory.
 

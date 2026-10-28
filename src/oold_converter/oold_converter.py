@@ -7,7 +7,7 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 # Configure package-level logging
 logging.basicConfig(
@@ -35,7 +35,7 @@ IRI_PATTERN = r"^([A-Za-z][A-Za-z0-9\-_]*:)?[A-Za-z0-9][A-Za-z0-9\-_]*$"
 HARDCODED_PROPERTIES = ("@id", "@type")
 
 
-def _iri_property(description: str) -> Dict[str, Any]:
+def _iri_property(description: str) -> dict[str, Any]:
     """Builds the shared JSON Schema shape used for the @id and @type
     properties."""
     return {
@@ -51,7 +51,7 @@ class ConversionError(Exception):
     """Error raised when conversion between formats fails."""
 
 
-def infer_type(values: List[Optional[str]]) -> str:
+def infer_type(values: list[str | None]) -> str:
     """
     Infers the JSON schema data type based on a list of string values.
     Strictly validates numbers against JSON specifications, rejecting NaN/Inf.
@@ -77,9 +77,7 @@ def infer_type(values: List[Optional[str]]) -> str:
     return "string"
 
 
-def _build_base_schema(
-    file_stem: str, base_url: Optional[str]
-) -> Dict[str, Any]:
+def _build_base_schema(file_stem: str, base_url: str | None) -> dict[str, Any]:
     """Constructs the baseline JSON Schema dictionary structure."""
     schema_filename = f"{file_stem}.schema.json"
     schema_id = (
@@ -107,10 +105,10 @@ def _build_base_schema(
 
 
 def _process_csv_headers(
-    headers: List[str],
-    rows: List[Dict[str, Any]],
-    properties_mapping: Optional[Dict[str, Any]],
-    schema: Dict[str, Any],
+    headers: list[str],
+    rows: list[dict[str, Any]],
+    properties_mapping: dict[str, Any] | None,
+    schema: dict[str, Any],
 ) -> None:
     """Processes CSV headers to define JSON Schema properties and fields."""
     for header in headers:
@@ -121,7 +119,7 @@ def _process_csv_headers(
         column_values = [row.get(header) for row in rows]
         inferred_type = infer_type(column_values)
 
-        prop_def: Dict[str, Any] = {
+        prop_def: dict[str, Any] = {
             "type": inferred_type,
             "description": "",
             "examples": [],
@@ -140,7 +138,7 @@ def _process_csv_headers(
 
 
 def _add_examples_from_first_row(
-    schema: Dict[str, Any], headers: List[str], first_row: Dict[str, Any]
+    schema: dict[str, Any], headers: list[str], first_row: dict[str, Any]
 ) -> None:
     """Extracts the first row of data to serve as JSON Schema examples."""
     if first_row:
@@ -157,8 +155,8 @@ def _add_examples_from_first_row(
 def csv_to_json_schema(
     input_file: Path,
     output_folder: Path,
-    base_url: Optional[str] = None,
-    properties_mapping: Optional[Dict[str, Any]] = None,
+    base_url: str | None = None,
+    properties_mapping: dict[str, Any] | None = None,
 ) -> None:
     """Reads a CSV file and generates an OO-LD JSON Schema.
 
@@ -194,7 +192,7 @@ def csv_to_json_schema(
     logger.info("Reading CSV file: %s", input_file)
 
     try:
-        with open(input_file, mode="r", encoding="utf-8-sig") as f:
+        with open(input_file, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
 
             headers = list(reader.fieldnames) if reader.fieldnames else []
@@ -234,7 +232,7 @@ def csv_to_json_schema(
 
 
 def _write_csv_reconstruction(
-    output_path: Path, headers: List[str], properties: Dict[str, Any]
+    output_path: Path, headers: list[str], properties: dict[str, Any]
 ) -> None:
     """Calculates max examples rows and outputs the reconstructed CSV."""
     max_rows = 0
@@ -295,7 +293,7 @@ def json_schema_to_csv(input_file: Path, output_folder: Path) -> None:
     logger.info("Reading JSON Schema file: %s", input_file)
 
     try:
-        with open(input_file, mode="r", encoding="utf-8") as f:
+        with open(input_file, encoding="utf-8") as f:
             schema = json.load(f)
     except json.JSONDecodeError as e:
         logger.error("Failed to decode JSON from %s: %s", input_file, e)
@@ -332,8 +330,8 @@ def json_schema_to_csv(input_file: Path, output_folder: Path) -> None:
 
 
 def process_path(
-    input_path: Union[str, Path],
-    output_folder: Union[str, Path],
+    input_path: str | Path,
+    output_folder: str | Path,
     mode: str,
     **kwargs: Any,
 ) -> None:
@@ -471,7 +469,7 @@ def main() -> None:
     properties_mapping = None
     if args.mappings:
         try:
-            with open(args.mappings, "r", encoding="utf-8") as f:
+            with open(args.mappings, encoding="utf-8") as f:
                 properties_mapping = json.load(f)
         except (OSError, json.JSONDecodeError) as e:
             logger.error(

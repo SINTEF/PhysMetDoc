@@ -8,8 +8,8 @@ special handling.
 import argparse
 import csv
 import warnings
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Sequence, Union
 
 from tripper import Session, Triplestore
 from tripper.datadoc import store
@@ -43,7 +43,7 @@ def normalize_unit(unit: str) -> str:
 
 
 def _asfloat(
-    values: Sequence[Union[str, float]], balance: float = 100
+    values: Sequence[str | float], balance: float = 100
 ) -> list[float]:
     """Returns `v` as a list of floating point numbers."""
     ib = -1
@@ -71,9 +71,9 @@ def _asfloat(
 
 
 def to_wtpercent(
-    values: Sequence[Union[str, float]],
+    values: Sequence[str | float],
     symbols: Sequence[str],
-    unit: Optional[str] = None,
+    unit: str | None = None,
 ) -> list[float]:
     """Convert `values` from unit `unit` to 'wt%'.
 
@@ -104,9 +104,9 @@ def to_wtpercent(
 
 
 def from_wtpercent(
-    values: Sequence[Union[str, float]],
+    values: Sequence[str | float],
     symbols: Sequence[str],
-    unit: Optional[str] = None,
+    unit: str | None = None,
 ) -> list[float]:
     """Convert `values` from unit 'wt%' to `unit`.
 
@@ -149,7 +149,7 @@ def parse(filename: Path, **spec) -> list:
     """
     # pylint: disable=too-many-locals
     conf = spec if spec else {}
-    with open(filename, "rt", newline="", encoding="utf8") as csvfile:
+    with open(filename, newline="", encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, **conf)
         header = [h.strip() for h in next(reader)]
 

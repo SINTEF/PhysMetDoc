@@ -40,7 +40,7 @@ testing = [
 pre-commit = [
     "physmetdoc[testing]",
     "pre-commit==4.6.2",
-    "pylint==4.0.8",
+    "ruff==0.17.3",
 ]
 dev = [
     "physmetdoc[pre-commit]",
@@ -77,14 +77,18 @@ include = ["/src/oold_converter", "/src/tabular", "/src/treeweaver"]
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.pylint.messages_control]
-disable = ["too-few-public-methods", "redefined-builtin"]
-
 [tool.ruff]
 line-length = 79
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM"]
+# E/F = standard syntax errors/style (defaults)
+# I = import sorting (isort replacement)
+# UP = modern Python syntax upgrades
+# B = common design flaws, code smells, and subtle bugs
+# SIM = simplification opportunities
+# S = security (bandit replacement)
+# T20 = debugging statement checks (debug-statements replacement)
+select = ["E", "F", "I", "UP", "B", "SIM", "S", "T20"]
 
 [tool.ruff.format]
 quote-style = "double"

@@ -5,7 +5,7 @@ Tries to extract vendor and technique from experimental output files.
 
 # import warnings
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from wcmatch import glob
 
@@ -18,7 +18,7 @@ def get_equipment(
     env: dict,
     override: bool = False,
     maxarray: int = 3,
-    equipment_table: Optional[str | Path | Table] = None,
+    equipment_table: str | Path | Table | None = None,
     **kwargs,
 ) -> dict:
     """Extract equipment and techniqe from raw output file.
@@ -139,7 +139,7 @@ def _parse_txt_tags(filename: PathType, maxarray: int = 3) -> dict:
     if not _match(filename, "**/*.txt"):
         return tags
 
-    with open(filename, "rt") as f:  # pylint: disable=unspecified-encoding
+    with open(filename) as f:  # pylint: disable=unspecified-encoding
         line1 = next(f).strip()
         f.seek(0)
         if line1.startswith("$") and "=" not in line1:
@@ -204,7 +204,7 @@ def _tifftag_34960(tifftag: Any, tags: dict) -> None:
 # Extractors
 
 
-def _extract_equipment(tags: dict, table: Optional[Table] = None) -> dict:
+def _extract_equipment(tags: dict, table: Table | None = None) -> dict:
     """Try to infer equipmentId from tags and equipment table."""
     if not table:
         return {}

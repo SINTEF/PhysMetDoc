@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 from .registry import get_reader, get_writer, supports_multi_sheet
 
@@ -20,9 +20,9 @@ logger = logging.getLogger(__name__)
 
 
 def read(
-    path: Union[str, Path],
-    format: Optional[str] = None,
-    sheets: Optional[list] = None,
+    path: str | Path,
+    format: str | None = None,
+    sheets: list | None = None,
     **kwargs: Any,
 ) -> Tables:
     """
@@ -107,12 +107,12 @@ def read(
 
 
 def write(
-    data: Union[Table, Tables],
-    path: Optional[Union[str, Path]] = None,
-    format: Optional[str] = None,
-    sheet: Optional[str | int] = None,
+    data: Table | Tables,
+    path: str | Path | None = None,
+    format: str | None = None,
+    sheet: str | int | None = None,
     **kwargs: Any,
-) -> Optional[str]:
+) -> str | None:
     """
     Writes a Table or Tables object to a file or string.
 

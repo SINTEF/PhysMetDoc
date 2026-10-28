@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Iterator, List, Optional, Union
+from typing import Any
 from warnings import deprecated
 
 from .table import Table
@@ -18,14 +19,14 @@ class Tables:
     and merging.
     """
 
-    def __init__(self, tables: Optional[List[Table]] = None) -> None:
+    def __init__(self, tables: list[Table] | None = None) -> None:
         """
         Initializes a Tables collection.
 
         Args:
             tables (List[Table], optional): A list of Table objects.
         """
-        self._tables: List[Table] = []
+        self._tables: list[Table] = []
         if tables:
             for t in tables:
                 self.append(t)
@@ -55,7 +56,7 @@ class Tables:
         ]
         return f"<Tables(count={len(self._tables)}, names={table_names})>"
 
-    def __getitem__(self, key: Union[int, str]) -> Table:
+    def __getitem__(self, key: int | str) -> Table:
         """
         Allows indexing to get a table by integer index or by name.
 
@@ -115,7 +116,7 @@ class Tables:
     # --- Properties ---
 
     @property
-    def tables(self) -> List[Table]:
+    def tables(self) -> list[Table]:
         """
         Retrieves all tables in the collection.
 
@@ -125,7 +126,7 @@ class Tables:
         return self._tables
 
     @property
-    def names(self) -> List[str | None]:
+    def names(self) -> list[str | None]:
         """
         Retrieves table names.
 
@@ -154,9 +155,9 @@ class Tables:
     @classmethod
     def read(
         cls,
-        path: Union[str, Path],
-        format: Optional[str] = None,
-        sheets: Optional[list] = None,
+        path: str | Path,
+        format: str | None = None,
+        sheets: list | None = None,
         **kwargs: Any,
     ) -> Tables:
         """
@@ -184,10 +185,10 @@ class Tables:
 
     def write(
         self,
-        path: Optional[Union[str, Path]] = None,
-        format: Optional[str] = None,
+        path: str | Path | None = None,
+        format: str | None = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Writes this Tables collection directly to a file or returns a string.
 
@@ -232,7 +233,7 @@ class Tables:
         """
         self._tables.append(table)
 
-    def append(self, table: Union[Table, Tables]) -> None:
+    def append(self, table: Table | Tables) -> None:
         """
         Appends a Table or Tables object to the end of the collection.
 
@@ -248,7 +249,7 @@ class Tables:
                 "Tables.append() can only append Table or Tables objects."
             )
 
-    def remove_table(self, key: Union[int, str]) -> None:
+    def remove_table(self, key: int | str) -> None:
         """
         Removes a table from the collection by its index or name.
 
@@ -284,7 +285,7 @@ class Tables:
         Returns:
             Table: A new Table containing all row data aligned to one schema.
         """
-        all_headers: List[str] = []
+        all_headers: list[str] = []
         for table in self._tables:
             for header in table.headers:
                 if header not in all_headers:
@@ -294,7 +295,7 @@ class Tables:
         for table in self._tables:
             for row in table.rows:
                 row_dict = dict(zip(table.headers, row))
-                merged_row = [row_dict.get(h, None) for h in all_headers]
+                merged_row = [row_dict.get(h) for h in all_headers]
                 merged_table.rows.append(merged_row)
 
         return merged_table

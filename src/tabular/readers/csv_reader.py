@@ -77,7 +77,7 @@ class CSVReader(BaseReader):
         collection = tabular.models.Tables()
 
         try:
-            with open(path, mode="r", encoding=encoding) as f:
+            with open(path, encoding=encoding) as f:
                 if sniff_dialect:
                     self._sniff_dialect(f, path, kwargs)
 

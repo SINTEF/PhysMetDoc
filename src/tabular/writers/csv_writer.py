@@ -4,7 +4,7 @@ import csv
 import io
 import logging
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import tabular.models
 
@@ -18,12 +18,12 @@ class CSVWriter(BaseWriter):
 
     def write(
         self,
-        data: Union[tabular.models.Table, tabular.models.Tables],
-        path: Optional[Path] = None,
-        newline: Optional[str] = "",
+        data: tabular.models.Table | tabular.models.Tables,
+        path: Path | None = None,
+        newline: str | None = "",
         encoding: str = "utf-8",
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Writes tabular data to a CSV file or string. If a multiple-table
         collection is provided, it automatically merges them prior to writing.

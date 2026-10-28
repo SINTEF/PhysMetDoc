@@ -1,6 +1,6 @@
 """Script that updates the PhysMet KG."""
 
-# pylint: disable=invalid-name
+# noqa: T201
 
 from pathlib import Path
 

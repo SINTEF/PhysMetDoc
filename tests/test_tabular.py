@@ -399,9 +399,9 @@ def test_csv_write_splits_multiple_tables():
     assert (expected_dir / "Mixed Formats.csv").exists()
     assert (expected_dir / "Simple Data.csv").exists()
 
-    assert (
-        not base_out_csv.exists()
-    ), "io.write created a merged CSV instead of splitting into a directory."
+    assert not base_out_csv.exists(), (
+        "io.write created a merged CSV instead of splitting into a directory."
+    )
 
 
 def test_writers_append_newline():
@@ -423,21 +423,21 @@ def test_writers_append_newline():
 
     if has_md and md_path.exists():
         md_content = md_path.read_text(encoding="utf-8")
-        assert md_content.endswith(
-            "\n"
-        ), "Markdown output must end with a newline character."
-        assert not md_content.endswith(
-            "\n\n"
-        ), "Markdown output must have exactly one trailing newline."
+        assert md_content.endswith("\n"), (
+            "Markdown output must end with a newline character."
+        )
+        assert not md_content.endswith("\n\n"), (
+            "Markdown output must have exactly one trailing newline."
+        )
 
     if has_json and json_path.exists():
         json_content = json_path.read_text(encoding="utf-8")
-        assert json_content.endswith(
-            "\n"
-        ), "JSON output must end with a newline character."
-        assert not json_content.endswith(
-            "\n\n"
-        ), "JSON output must have exactly one trailing newline."
+        assert json_content.endswith("\n"), (
+            "JSON output must end with a newline character."
+        )
+        assert not json_content.endswith("\n\n"), (
+            "JSON output must have exactly one trailing newline."
+        )
 
 
 def test_json_unicode_formatting():

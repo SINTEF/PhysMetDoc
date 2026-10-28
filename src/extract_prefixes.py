@@ -12,7 +12,6 @@ import csv
 import json
 import warnings
 from pathlib import Path
-from typing import Optional
 
 thisdir = Path(__file__).resolve().parent
 default_files = [
@@ -44,7 +43,7 @@ def parse(filename: Path, **spec) -> dict:
     with open(filename, newline="", encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, **conf)
         header = next(reader)
-        if not "prefix" in header and not "namespace" in header:
+        if "prefix" not in header and "namespace" not in header:
             warnings.warn(
                 f"{filename}: Missing 'prefix' or 'namespace' in header"
             )
@@ -66,7 +65,7 @@ def parse(filename: Path, **spec) -> dict:
     return prefixes
 
 
-def write_jsonld(output: Optional[Path], prefixes: dict) -> None:
+def write_jsonld(output: Path | None, prefixes: dict) -> None:
     """Write JSON-LD context.
 
     Args:
@@ -76,7 +75,7 @@ def write_jsonld(output: Optional[Path], prefixes: dict) -> None:
     context = {"@context": prefixes}
     jsonld = json.dumps(context, indent=2, sort_keys=False) + "\n"
     if output:
-        with open(output, "wt", encoding="utf8") as f:
+        with open(output, "w", encoding="utf8") as f:
             f.write(jsonld)
     else:
         print(jsonld)
