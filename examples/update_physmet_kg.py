@@ -1,6 +1,6 @@
 """Script that updates the PhysMet KG."""
 
-# noqa: T201
+# ruff: noqa: T201
 
 from pathlib import Path
 

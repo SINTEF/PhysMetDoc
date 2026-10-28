@@ -78,7 +78,7 @@ def write_jsonld(output: Path | None, prefixes: dict) -> None:
         with open(output, "w", encoding="utf8") as f:
             f.write(jsonld)
     else:
-        print(jsonld)
+        print(jsonld)  # noqa: T201
 
 
 def main() -> None:

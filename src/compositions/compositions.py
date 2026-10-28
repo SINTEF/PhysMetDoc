@@ -93,13 +93,23 @@ def to_wtpercent(
     if unit == "wt%":
         return vals
     if unit == "at%":
-        t = sum(v * atomic_masses[s] for v, s in zip(vals, symbols))
-        return [100 * v * atomic_masses[s] / t for v, s in zip(vals, symbols)]
+        t = sum(
+            v * atomic_masses[s] for v, s in zip(vals, symbols, strict=True)
+        )
+        return [
+            100 * v * atomic_masses[s] / t
+            for v, s in zip(vals, symbols, strict=True)
+        ]
     if unit == "wtfrac":
         return [100 * v for v in vals]
     if unit == "atfrac":
-        t = sum(v * atomic_masses[s] for v, s in zip(vals, symbols))
-        return [100 * v * atomic_masses[s] / t for v, s in zip(vals, symbols)]
+        t = sum(
+            v * atomic_masses[s] for v, s in zip(vals, symbols, strict=True)
+        )
+        return [
+            100 * v * atomic_masses[s] / t
+            for v, s in zip(vals, symbols, strict=True)
+        ]
     raise ValueError(f"not a normalised unit: {unit}")
 
 
@@ -126,13 +136,23 @@ def from_wtpercent(
     if unit == "wt%":
         return vals
     if unit == "at%":
-        t = sum(v / atomic_masses[s] for v, s in zip(vals, symbols))
-        return [100 * v / atomic_masses[s] / t for v, s in zip(vals, symbols)]
+        t = sum(
+            v / atomic_masses[s] for v, s in zip(vals, symbols, strict=True)
+        )
+        return [
+            100 * v / atomic_masses[s] / t
+            for v, s in zip(vals, symbols, strict=True)
+        ]
     if unit == "wtfrac":
         return [0.01 * v for v in vals]
     if unit == "atfrac":
-        t = sum(v / atomic_masses[s] for v, s in zip(vals, symbols))
-        return [v / atomic_masses[s] / t for v, s in zip(vals, symbols)]
+        t = sum(
+            v / atomic_masses[s] for v, s in zip(vals, symbols, strict=True)
+        )
+        return [
+            v / atomic_masses[s] / t
+            for v, s in zip(vals, symbols, strict=True)
+        ]
     raise ValueError(f"not a normalised unit: {unit}")
 
 
@@ -180,12 +200,16 @@ def parse(filename: Path, **spec) -> list:
         compositions = []
         for row in reader:
             d = {
-                "@id": [cell for h, cell in zip(header, row) if h == "@id"][0],
+                "@id": [
+                    cell
+                    for h, cell in zip(header, row, strict=True)
+                    if h == "@id"
+                ][0],
                 "@type": EMMO.ChemicalComposition,
                 "hasSingleComponentComposition": [],
             }
             values = to_wtpercent([row[i] for i in icomp], symbols, unitname)
-            for symbol, v in zip(symbols, values):
+            for symbol, v in zip(symbols, values, strict=True):
                 species = get_species_iri(symbol)
                 d["hasSingleComponentComposition"].append(
                     {
