@@ -188,7 +188,10 @@ def parse(filename: Path, **spec) -> list:
             if "[" in h:
                 u = normalize_unit(h.split("[")[1].rstrip("]"))
             else:
-                warnings.warn(f"No unit provided for '{h}', assuming wt%")
+                warnings.warn(
+                    f"{filename}: No unit provided for '{h}', assuming wt%",
+                    stacklevel=2,
+                )
                 u = normalize_unit("wt%")
             if unitname is None:
                 unitname = u

@@ -463,6 +463,7 @@ def find_datadocs(
 
 
 def main():
+    # ruff: noqa: T201
     parser = argparse.ArgumentParser(
         description="Discover datadoc entries from a structured directory"
     )

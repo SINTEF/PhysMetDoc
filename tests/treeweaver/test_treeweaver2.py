@@ -1,5 +1,7 @@
 """Tests for treeweaver2.py - the updated treeweaver implementation."""
 
+# ruff: noqa: S101
+
 import os
 import shutil
 from pathlib import Path

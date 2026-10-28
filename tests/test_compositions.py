@@ -1,5 +1,7 @@
 """Test parse_compositions."""
 
+# ruff: noqa: S101
+
 import tempfile
 from pathlib import Path
 

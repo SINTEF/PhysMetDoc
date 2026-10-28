@@ -1,6 +1,7 @@
 """Treeweaver tests"""
 
-# pylint: disable=missing-function-docstring,subprocess-run-check
+# ruff: noqa: S101
+
 import json
 import subprocess
 
@@ -12,7 +13,7 @@ def run_path2dict(*args, path="tests/treeweaver/data/Andreas", intent=None):
     if intent:
         command.extend(["--intent", intent])
     command.extend(args)
-    return subprocess.run(command, capture_output=True, text=True)
+    return subprocess.run(command, capture_output=True, text=True)  # noqa: S603
 
 
 def write_treeweaver(path, text):

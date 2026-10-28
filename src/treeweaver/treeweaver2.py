@@ -10,7 +10,6 @@ from collections import defaultdict
 from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
-from typing import Union
 
 import parse
 import yaml
@@ -21,8 +20,8 @@ from tabular import Table, Tables
 
 __version__ = "2.0"
 
-PathType = Union[Path, str]
-ValueType = Union[str, list, dict, bool, int, float, None]  # template values
+PathType = Path | str
+ValueType = str | list | dict | bool | int | float | None  # template values
 
 
 class PatternSpecError(Exception):
@@ -103,7 +102,7 @@ class Template:
                         f"Variable {exc} in stencil substitution for "
                         f"'{keyword}' is not assigned in pattern for "
                         f"template '{self.name}'"
-                    )
+                    ) from exc
         return doc
 
 
@@ -231,7 +230,7 @@ class Pattern:
         # pylint: disable=unused-argument
         for redef in self.regexps:
             if m := redef["pattern"].match(redef["string"].format(**env)):
-                for k, v in zip(redef["matchvars"], m.groups()):
+                for k, v in zip(redef["matchvars"], m.groups(), strict=True):
                     env[k] = v
 
     def assign_mappings(self, path: PathType, env: dict):
@@ -364,12 +363,12 @@ class Treeweaver:
             try:
                 d = pattern.document(path, self.env)
             except UnassignedVariableError as exc:
-                msg = f"When documenting '{path}': {str(exc)[1:-1]}"
+                msg = f"{path}: {str(exc)[1:-1]}"
                 if self.settings.get("skip_unassigned", False):
-                    warnings.warn(msg)
+                    warnings.warn(msg, stacklevel=2)
                     continue
                 # pylint: disable=raise-missing-from
-                raise UnassignedVariableError(msg)
+                raise UnassignedVariableError(msg) from None
             for k, v in d.items():
                 docs[k].append(v)
 
@@ -614,7 +613,7 @@ def totable(
     dicts = list(dicts)  # in case dicts is a iterator
     headers = {}
     for d in dicts:
-        headers.update({k: True for k in d.keys()})
+        headers.update({k: True for k in d})
 
     if indexcolumn:
         if oldtable:

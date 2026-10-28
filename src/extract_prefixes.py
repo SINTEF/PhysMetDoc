@@ -45,7 +45,8 @@ def parse(filename: Path, **spec) -> dict:
         header = next(reader)
         if "prefix" not in header and "namespace" not in header:
             warnings.warn(
-                f"{filename}: Missing 'prefix' or 'namespace' in header"
+                f"{filename}: Missing 'prefix' or 'namespace' in header",
+                stacklevel=2,
             )
             return {}
         iprefix = header.index("prefix")

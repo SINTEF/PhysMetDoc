@@ -1,8 +1,11 @@
 # tests/test_treeweaver2_main.py
 """Unit test suite for treeweaver2 main() function."""
 
+# ruff: noqa: S101
+
 import pytest
 from test_treeweaver2 import mktestdir, outdir
+from yaml.scanner import ScannerError
 
 from treeweaver.treeweaver2 import main
 
@@ -213,7 +216,7 @@ def test_main_invalid_yaml():
 
     output = testdir / "output.xlsx"
 
-    with pytest.raises(Exception):  # yaml.YAMLError or similar
+    with pytest.raises(ScannerError):
         main(
             [
                 str(testdir),

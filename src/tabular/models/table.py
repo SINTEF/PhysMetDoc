@@ -8,11 +8,10 @@ from pathlib import Path
 from typing import (
     Any,
     Literal,
-    Union,
 )
 
-PathType = Union[str, Path]
-IndexType = Union[int, str]
+PathType = str | Path
+IndexType = int | str
 
 
 logger = logging.getLogger(__name__)
@@ -281,7 +280,7 @@ class Table:
                 row.extend([None] * len(new_headers))
 
         for other_row in other.rows:
-            row_dict = dict(zip(other.headers, other_row))
+            row_dict = dict(zip(other.headers, other_row, strict=True))
             mapped_row = [row_dict.get(h) for h in self.headers]
             self.rows.append(mapped_row)
 
@@ -292,7 +291,7 @@ class Table:
         Returns:
             List[Dict[str, Any]]: A list where each dict represents one row.
         """
-        return [dict(zip(self.headers, row)) for row in self.rows]
+        return [dict(zip(self.headers, row, strict=True)) for row in self.rows]
 
     def match_rows(
         self,
@@ -318,7 +317,7 @@ class Table:
         if isinstance(columns, (str, int)):
             columns, values = [columns], [values]
         rows = self.rows
-        for col, value in zip(columns, values):
+        for col, value in zip(columns, values, strict=True):
             i = self.headers.index(col) if isinstance(col, str) else col
             rows = [row for row in rows if row[i] == value]
         return rows

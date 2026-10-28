@@ -108,10 +108,7 @@ class Tables:
             Whether there exists a table with this name.
 
         """
-        for table in self._tables:
-            if table.name == name:
-                return True
-        return False
+        return any(table.name == name for table in self._tables)
 
     # --- Properties ---
 
@@ -294,7 +291,7 @@ class Tables:
         merged_table = Table(name=merged_name, headers=all_headers)
         for table in self._tables:
             for row in table.rows:
-                row_dict = dict(zip(table.headers, row))
+                row_dict = dict(zip(table.headers, row, strict=True))
                 merged_row = [row_dict.get(h) for h in all_headers]
                 merged_table.rows.append(merged_row)
 

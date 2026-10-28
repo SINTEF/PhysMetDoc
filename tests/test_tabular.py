@@ -1,7 +1,8 @@
 """Unit test suite for the tabular library."""
 
+# ruff: noqa: S101
+
 import logging
-import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -485,36 +486,3 @@ def test_lookup():
         t.lookup("Non-existing", 33, "ID", mode="unique")
     with pytest.raises(IndexError):
         t.lookup(5, 33, "ID", mode="unique")
-
-
-# pylint: disable=duplicate-code
-if __name__ == "__main__":
-    print("Running Tabular Data IO tests standalone...\n")
-    test_functions = [
-        obj
-        for name, obj in globals().items()
-        if callable(obj) and name.startswith("test_")
-    ]
-
-    PASSED, FAILED = 0, 0
-    for test_func in test_functions:
-        sys.stdout.write(f"Running {test_func.__name__} ... ")
-        try:
-            test_func()
-            print("PASSED")
-            PASSED += 1
-        except (
-            AssertionError,
-            ValueError,
-            TypeError,
-            KeyError,
-            OSError,
-        ) as e:
-            print(f"FAILED\n  -> {type(e).__name__}: {e}")
-            FAILED += 1
-
-    print("\n--- Test Run Summary ---")
-    print(f"Total: {PASSED + FAILED} | Passed: {PASSED} | Failed: {FAILED}")
-
-    if FAILED > 0:
-        raise RuntimeError(f"Test suite failed with {FAILED} errors.")

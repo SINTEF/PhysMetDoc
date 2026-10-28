@@ -1,9 +1,10 @@
 """Unit tests for the OO-LD converter module."""
 
+# ruff: noqa: S101
+
 import csv
 import json
 import logging
-import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -14,7 +15,7 @@ import requests
 from jsonschema.exceptions import ValidationError
 from referencing import Registry, Resource
 
-from oold_converter import (
+from oold_converter.oold_converter import (
     CONTEXT_URL,
     META_SCHEMA,
     ConversionError,
@@ -452,38 +453,3 @@ def test_conversion_error_wraps_original_exception():
     except ConversionError as e:
         assert str(e) == "wrapped failure"
         assert e.__cause__ is original
-
-
-# --- Standalone Execution Logic (for ipython / python execution) ---
-
-# pylint: disable=duplicate-code
-if __name__ == "__main__":
-    print("Running OOLD Converter tests standalone...\n")
-
-    # Dynamically find all functions in this file starting with "test_"
-    test_functions = [
-        obj
-        for name, obj in globals().items()
-        if callable(obj) and name.startswith("test_")
-    ]
-
-    # pylint: disable=invalid-name
-    PASSED = 0
-    FAILED = 0
-
-    for test_func in test_functions:
-        sys.stdout.write(f"Running {test_func.__name__} ... ")
-        try:
-            test_func()
-            print("PASSED")
-            PASSED += 1
-        # pylint: disable=broad-exception-caught
-        except Exception as err:
-            print(f"FAILED\n  -> {type(err).__name__}: {err}")
-            FAILED += 1
-
-    print("\n--- Test Run Summary ---")
-    print(f"Total: {PASSED + FAILED} | Passed: {PASSED} | Failed: {FAILED}")
-
-    if FAILED > 0:
-        sys.exit(1)
