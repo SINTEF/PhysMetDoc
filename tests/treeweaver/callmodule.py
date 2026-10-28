@@ -1,7 +1,5 @@
 """Module for testing calling functions in the pattern section."""
 
-# pylint: disable=unused-argument
-
 from pathlib import Path
 
 

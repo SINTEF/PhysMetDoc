@@ -21,10 +21,7 @@ CONTEXT_FILE = Path(__file__).parent.parent / "context" / "context.json"
 DATADIR = Path(__file__).parent / "data" / "parse_compositions"
 
 # Create a root temporary directory for the session
-_SESSION_TMPROOT = (
-    # pylint: disable=consider-using-with
-    tempfile.TemporaryDirectory(prefix="physmet-ddoc-")
-)
+_SESSION_TMPROOT = tempfile.TemporaryDirectory(prefix="physmet-ddoc-")
 TMPROOT = Path(_SESSION_TMPROOT.name)
 
 

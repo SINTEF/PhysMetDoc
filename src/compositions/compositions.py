@@ -167,7 +167,6 @@ def parse(filename: Path, **spec) -> list:
     Returns:
         List of compositions correctly represented according to EMMO.
     """
-    # pylint: disable=too-many-locals
     conf = spec if spec else {}
     with open(filename, newline="", encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, **conf)

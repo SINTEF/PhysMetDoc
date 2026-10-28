@@ -173,7 +173,6 @@ class Tables:
         Returns:
             Tables: The parsed tables collection.
         """
-        # pylint: disable=import-outside-toplevel
         from tabular.io import read
 
         return read(path, format=format, sheets=sheets, **kwargs)
@@ -197,7 +196,6 @@ class Tables:
         Returns:
             Optional[str]: Serialized string if path is None, else None.
         """
-        # pylint: disable=import-outside-toplevel
         from tabular.io import write
 
         return write(self, path=path, format=format, **kwargs)

@@ -1,7 +1,5 @@
 """An updated treeweaver implementation."""
 
-# pylint: disable=too-few-public-methods
-
 import argparse
 import importlib
 import re
@@ -97,7 +95,6 @@ class Template:
                     if s := substitute(stencil, env):
                         doc[keyword] = s
                 except KeyError as exc:
-                    # pylint: disable=raise-missing-from
                     raise UnassignedVariableError(
                         f"Variable {exc} in stencil substitution for "
                         f"'{keyword}' is not assigned in pattern for "
@@ -117,10 +114,7 @@ class Pattern:
 
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, pattern: str, templates: dict, spec: dict) -> None:
-        # pylint: disable=too-many-locals
 
         s = spec.copy()
         # Pre-process pattern
@@ -130,7 +124,6 @@ class Pattern:
         ).replace(" ", "%20")
         self.pattern = parse.compile(processed, extra_types=parse_formatters)
 
-        # pylint: disable=invalid-name
         self.appliesTo = s.pop("appliesTo", templates.keys())
 
         self.matchfilter = (
@@ -227,7 +220,6 @@ class Pattern:
 
     def assign_regexp(self, path: PathType, env: dict):
         """Update `env` from regular expression matching."""
-        # pylint: disable=unused-argument
         for redef in self.regexps:
             if m := redef["pattern"].match(redef["string"].format(**env)):
                 for k, v in zip(redef["matchvars"], m.groups(), strict=True):
@@ -367,7 +359,6 @@ class Treeweaver:
                 if self.settings.get("skip_unassigned", False):
                     warnings.warn(msg, stacklevel=2)
                     continue
-                # pylint: disable=raise-missing-from
                 raise UnassignedVariableError(msg) from None
             for k, v in d.items():
                 docs[k].append(v)
@@ -377,7 +368,7 @@ class Treeweaver:
     def document_pathtable(
         self,
         filename: PathType,
-        format: str | None = None,  # pylint: disable=redefined-builtin
+        format: str | None = None,
         sheet: str | int = 1,
         reader_param: dict | None = None,
         mappings: dict | None = None,
@@ -405,7 +396,6 @@ class Treeweaver:
         SeeAlso:
             https://support.microsoft.com/en-us/excel/import-data-from-data-sources-power-query
         """
-        # pylint: disable=too-many-locals
         rparam = reader_param if reader_param else {}
         maps = mappings if mappings else {}
         table = Table.read(filename, format=format, sheet=sheet, **rparam)
@@ -542,8 +532,6 @@ class Treeweaver:
             **kwargs: Additional keyword arguments passed to the Tables.write()
                 method.
         """
-        # pylint: disable=too-many-positional-arguments,too-many-locals
-        # pylint: disable=too-many-arguments
         singlefile_formats = set(["csv"])
         s = Path(source)
         if s.is_dir():

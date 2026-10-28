@@ -30,7 +30,6 @@ from oold_converter.oold_converter import (
 DATA_DIR = Path(__file__).parent / "data" / "oold_converter"
 
 # Create a root temporary directory for the session
-# pylint: disable=consider-using-with
 _SESSION_TMP_DIR = tempfile.TemporaryDirectory()
 TMP_ROOT = Path(_SESSION_TMP_DIR.name)
 

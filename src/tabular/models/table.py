@@ -174,7 +174,6 @@ class Table:
         Raises:
             ValueError: If the target file contains multiple tables.
         """
-        # pylint: disable=import-outside-toplevel
         from tabular.io import read
 
         sheets = None if sheet is None else [sheet]
@@ -206,7 +205,6 @@ class Table:
         Returns:
             Optional[str]: Serialized string if path is None, else None.
         """
-        # pylint: disable=import-outside-toplevel
         from tabular.io import write
 
         return write(self, path=path, format=format, **kwargs)
@@ -322,7 +320,6 @@ class Table:
             rows = [row for row in rows if row[i] == value]
         return rows
 
-    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def lookup(
         self,
         columns: IndexType | Sequence[IndexType],
