@@ -1,7 +1,7 @@
 """Script for lownloading `shared resources.xlsx` from SharePoint and update
 the CSV files."""
 
-# pylint: disable=invalid-name
+# ruff: noqa: T201
 
 import sys
 from pathlib import Path

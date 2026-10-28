@@ -9,7 +9,6 @@ def canonical_extension(path: PathType, env: dict) -> dict:
     Uses `format` in the input and returns dict with `format` set to the
     canonical file extension.
     """
-    # pylint: disable=unused-argument
     translated_formats = {
         "tif": "tiff",
         "TIF": "tiff",
@@ -26,7 +25,6 @@ def media_type(path: PathType, env: dict) -> dict:
     Uses `format` in the input and returns dict with `mediaType` set to the
     full IANA IRI (or "", if format is unknown).
     """
-    # pylint: disable=unused-argument
     media_types = {
         "png": "iana:image/png",
         "tiff": "iana:image/tiff",

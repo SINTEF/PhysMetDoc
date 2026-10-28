@@ -3,7 +3,7 @@
 Tries to extract vendor and technique from experimental output files.
 """
 
-# import warnings
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -51,15 +51,11 @@ def get_equipment(
                 try:
                     if d := extractor(tags, equipment_table):
                         return d
-                except LookupError:
-                    print(
-                        "*** The equipment cannot be uniquely identified "
+                except LookupError as exc:
+                    raise LookupError(
+                        f"{path}: The equipment cannot be uniquely identified "
                         "in the equipment table:"
-                    )
-                    for k, v in tags.items():
-                        print(f"  - {k}: {v}")
-                    print("*** path:", path)
-                    raise
+                    ) from exc
     return {}
 
 
@@ -106,7 +102,6 @@ def _parse_tiff_tags(filename: PathType, maxarray: int = 3) -> dict:
     if txtfile.exists():
         tags.update(_parse_txt_tags(txtfile, maxarray=maxarray))
 
-    # pylint: disable=import-outside-toplevel
     from PIL import Image
     from PIL.TiffTags import TAGS
 
@@ -127,19 +122,17 @@ def _parse_tiff_tags(filename: PathType, maxarray: int = 3) -> dict:
                 if special_tags[k]:
                     special_tags[k](v, tags)  # type: ignore[misc]
             else:
-                # warnings.warn(f"Unknown tag {k} in: {filename}")
-                print(f"Unknown tag {k} in: {filename}")
+                warnings.warn(f"{filename}: Unknown tag: {k}", stacklevel=2)
     return tags
 
 
 def _parse_txt_tags(filename: PathType, maxarray: int = 3) -> dict:
     """Return tags from a text file."""
-    # pylint: disable=unused-argument
     tags: dict = {}
     if not _match(filename, "**/*.txt"):
         return tags
 
-    with open(filename) as f:  # pylint: disable=unspecified-encoding
+    with open(filename) as f:
         line1 = next(f).strip()
         f.seek(0)
         if line1.startswith("$") and "=" not in line1:
@@ -147,21 +140,20 @@ def _parse_txt_tags(filename: PathType, maxarray: int = 3) -> dict:
                 key, value = line.strip().split(" ", 1)
                 tags.setdefault(key.strip(), value.strip())
         else:
-            print(
-                f"Unknown format of text file: '{filename}'. "
-                f"Starts with: '{line1}'"
+            warnings.warn(
+                f"{filename}: Unknown format of text file. "
+                f"Starts with: '{line1}'",
+                stacklevel=2,
             )
     return tags
 
 
 def _parse_dm3_tags(filename: PathType, maxarray: int = 3) -> dict:
     """Return tags from a dm3 and dm4 files."""
-    # pylint: disable=unused-argument
     tags: dict = {}
     if not _match(filename, "**/*.{dm3,dm4}"):
         return tags
 
-    # pylint: disable=import-outside-toplevel
     from ncempy.io import dm
 
     with dm.fileDM(filename) as dm3:
@@ -196,7 +188,6 @@ def _tifftag_34118(tifftag: Any, tags: dict) -> None:
 
 def _tifftag_34960(tifftag: Any, tags: dict) -> None:
     """Parse TIFF tag `tifftag` and update the `tags` dict."""
-    # pylint: disable=unused-argument
     tags.setdefault("instrument", "SIMS")
 
 

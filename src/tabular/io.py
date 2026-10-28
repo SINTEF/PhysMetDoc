@@ -1,8 +1,5 @@
 """Unified I/O interface for reading and writing tabular datasets."""
 
-# Seems that pylint errorously reports cyclic import
-# pylint: disable=cyclic-import
-
 from __future__ import annotations
 
 import logging
@@ -49,7 +46,6 @@ def read(
         ValueError: If format cannot be determined or reading fails.
         FileNotFoundError: If the specified path does not exist.
     """
-    # pylint: disable=too-many-locals
     file_path = Path(path)
 
     # Check if directory exists directly or as a stem fallback (for symmetry)

@@ -2,3 +2,12 @@
 
 from .compositions import normalize_unit, parse
 from .utils import EMMO, atomic_masses, atomic_names, get_species_iri
+
+__all__ = [
+    "EMMO",
+    "atomic_masses",
+    "atomic_names",
+    "get_species_iri",
+    "normalize_unit",
+    "parse",
+]
