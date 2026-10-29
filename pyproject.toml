@@ -60,9 +60,6 @@ compositions = "compositions.compositions:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.black]
-line-length = 79
-
 # Explicitly tell Hatchling where your packages live
 [tool.hatch.build.targets.wheel]
 packages = [
