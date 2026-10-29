@@ -39,7 +39,7 @@ testing = [
 ]
 pre-commit = [
     "physmetdoc[testing]",
-    "pre-commit==4.6.2",
+    "pre-commit==4.7.0",
     "ruff==0.17.3",
 ]
 dev = [
